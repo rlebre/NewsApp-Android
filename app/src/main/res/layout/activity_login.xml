@@ -14,38 +14,60 @@
         android:id="@+id/main_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/login_email"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="48dp"
-        android:src="@drawable/main_logo" />
+        android:layout_alignEnd="@+id/login_email"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:src="@drawable/main_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="false" />
+
 
     <Button
         android:id="@+id/login_email"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
         android:text="Email" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/login_google"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/login_email"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp" />
+
 
     <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_facebook"
-        android:layout_width="wrap_content"
+        android:id="@+id/login_facebook_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/login_google"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp" />
 
     <Button
         android:id="@+id/register"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/login_facebook"
+        android:layout_below="@+id/login_facebook_button"
         android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
         android:text="Register" />
+
 </RelativeLayout>
