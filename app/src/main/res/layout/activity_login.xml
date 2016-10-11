@@ -11,43 +11,41 @@
 
 
     <ImageView
+        android:id="@+id/main_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/main_logo"
-        android:src="@drawable/main_logo"
         android:layout_above="@+id/login_email"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="48dp" />
+        android:layout_marginBottom="48dp"
+        android:src="@drawable/main_logo" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
         android:id="@+id/login_email"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Google"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Email" />
+
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/login_google"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/login_email"
         android:layout_centerHorizontal="true" />
 
-    <Button
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_facebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Facebook"
-        android:id="@+id/login_facebook"
         android:layout_below="@+id/login_google"
         android:layout_centerHorizontal="true" />
 
     <Button
+        android:id="@+id/register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register"
-        android:id="@+id/register"
         android:layout_below="@+id/login_facebook"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="Register" />
 </RelativeLayout>

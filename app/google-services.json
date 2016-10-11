@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1021543019742",
+    "project_id": "teak-perigee-144211"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021543019742:android:f09e53a38f340698",
+        "android_client_info": {
+          "package_name": "com.ua.cm.project.unews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021543019742-elv63ol4eda2fh0q2ufffk7t5jklo4ii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ua.cm.project.unews",
+            "certificate_hash": "A2D21E1CD2D7810DBBE02548802981C215684BFC"
+          }
+        },
+        {
+          "client_id": "1021543019742-fblo0gh7irqtnnl4foflulvvto6ad2ch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwbOrzG2DLfRDFyEXT7wAMIVdROUL6aY8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
