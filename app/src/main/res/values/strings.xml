@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">UNews</string>
     <string name="facebook_app_id">552010661644671</string>
+    <string name="fb_login_protocol_scheme">fb552010661644671</string>
 </resources>

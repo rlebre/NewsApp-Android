@@ -15,19 +15,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/login_email"
-        android:layout_alignParentTop="true"
-        android:adjustViewBounds="true"
-        android:src="@drawable/main_logo"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="false" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        android:src="@drawable/main_logo" />
 
 
     <Button
         android:id="@+id/login_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/login_google"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="30dp"
@@ -40,19 +41,18 @@
         android:id="@+id/login_google"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/login_email"
+        android:layout_above="@+id/login_facebook_button"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:paddingBottom="15dp"
-        android:paddingTop="15dp" />
+        android:paddingBottom="5dp" />
 
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_facebook_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/login_google"
+        android:layout_above="@+id/register"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:paddingBottom="15dp"
@@ -62,7 +62,11 @@
         android:id="@+id/register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/login_facebook_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignWithParentIfMissing="false"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
