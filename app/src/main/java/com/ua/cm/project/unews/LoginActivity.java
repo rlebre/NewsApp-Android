@@ -2,6 +2,7 @@ package com.ua.cm.project.unews;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +28,13 @@ public class LoginActivity extends AppCompatActivity {
     private Button login_email_button;
     private Button register_button;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
+// ...
+
+
+// Obtain the FirebaseAnalytics instance.
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
         register_button = (Button) findViewById(R.id.login_register_button);
 
         mAuth = FirebaseAuth.getInstance();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -55,6 +66,21 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(a, LoginEmailActivity.class));
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    // Name, email address, and profile photo Url
+                    String name = user.getDisplayName();
+                    String email = user.getEmail();
+                    Uri photoUrl = user.getPhotoUrl();
+
+                    // The user's ID, unique to the Firebase project. Do NOT use this value to
+                    // authenticate with your backend server, if you have one. Use
+                    // FirebaseUser.getToken() instead.
+                    String uid = user.getUid();
+
+                    Log.d(TAG_FIREBASE, name + email + photoUrl + uid + "<=========");
+                }
             }
         });
 
@@ -64,28 +90,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(a, RegisterActivity.class));
             }
         });
-
-
-        String email = "test1@test.com";
-        String password = "test123";
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG_FIREBASE, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        Log.d(TAG_FIREBASE, "============>" + task.getResult().toString());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(a, "failed", Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                }
-
-        );
 
 
     }

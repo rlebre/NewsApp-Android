@@ -10,7 +10,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/colorPrimary"
-        android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin">
 
@@ -18,7 +17,9 @@
         <ImageView
             android:layout_width="@dimen/logo_w_h"
             android:layout_height="@dimen/logo_w_h"
+            android:layout_gravity="center"
             android:layout_marginBottom="30dp"
+            android:contentDescription="@string/logo"
             android:src="@drawable/main_logo" />
 
         <Button
@@ -29,6 +30,7 @@
             android:layout_marginRight="30dp"
             android:paddingBottom="15dp"
             android:paddingTop="15dp"
+
             android:text="@string/email" />
 
         <Button
@@ -41,5 +43,12 @@
             android:paddingTop="15dp"
             android:text="@string/action_register" />
 
+        <TextView
+            android:id="@+id/not_now_hyperlink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="Not now"
+            android:textAlignment="center" />
     </LinearLayout>
 </RelativeLayout>
