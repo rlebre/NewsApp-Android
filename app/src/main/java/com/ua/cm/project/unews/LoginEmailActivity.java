@@ -3,6 +3,7 @@ package com.ua.cm.project.unews;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -51,8 +52,7 @@ public class LoginEmailActivity extends LoginActivity implements LoaderCallbacks
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +82,7 @@ public class LoginEmailActivity extends LoginActivity implements LoaderCallbacks
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
+        progressDialog = new ProgressDialog(this);
     }
 
     private void populateAutoComplete() {
@@ -119,8 +119,7 @@ public class LoginEmailActivity extends LoginActivity implements LoaderCallbacks
      * Callback received when a permissions request has been completed.
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
@@ -166,19 +165,21 @@ public class LoginEmailActivity extends LoginActivity implements LoaderCallbacks
         if (cancel) {
             focusView.requestFocus();
         } else {
+
+            progressDialog.setMessage("Registering User...");
+            progressDialog.show();
             //authenticate user
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(LoginEmailActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            mProgressView.setVisibility(View.GONE);
+                            progressDialog.dismiss();
+
                             if (!task.isSuccessful()) {
                                 Toast.makeText(LoginEmailActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                             } else {
-                                Intent intent = new Intent(LoginEmailActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                                Toast.makeText(LoginEmailActivity.this, "LOGGED IN", Toast.LENGTH_LONG).show();
-                                finish();
+                                dumpActivityStart();
+                                Toast.makeText(getApplicationContext(), "LOGGED IN", Toast.LENGTH_LONG).show();
                             }
                         }
                     });

@@ -33,6 +33,15 @@
 
             android:text="@string/email" />
 
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/login_google_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp" />
+
         <Button
             android:id="@+id/login_register_button"
             android:layout_width="match_parent"
@@ -48,6 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
+            android:linksClickable="true"
             android:text="Not now"
             android:textAlignment="center" />
     </LinearLayout>
