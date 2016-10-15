@@ -168,6 +168,8 @@ public class RegisterActivity extends LoginActivity implements LoaderCallbacks<C
 
                     if (task.isSuccessful()) {
                         Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
+                        mAuth.getCurrentUser().sendEmailVerification();
+
                     } else {
                         Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
                     }

@@ -166,7 +166,7 @@ public class LoginEmailActivity extends LoginActivity implements LoaderCallbacks
             focusView.requestFocus();
         } else {
 
-            progressDialog.setMessage("Registering User...");
+            progressDialog.setMessage("Signing in...");
             progressDialog.show();
             //authenticate user
             mAuth.signInWithEmailAndPassword(email, password)
