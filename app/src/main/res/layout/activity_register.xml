@@ -11,6 +11,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.ua.cm.project.unews.RegisterActivity">
 
+    <ImageView
+        android:layout_width="@dimen/logo_w_h"
+        android:layout_height="@dimen/logo_w_h"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/main_logo" />
+
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
