@@ -83,7 +83,6 @@ public class LoginEmailActivity extends LoginActivity implements LoaderCallbacks
         });
 
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
     }
 
     private void populateAutoComplete() {

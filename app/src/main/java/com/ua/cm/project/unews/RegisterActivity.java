@@ -155,23 +155,27 @@ public class RegisterActivity extends LoginActivity implements LoaderCallbacks<C
             cancel = true;
         }
 
-        progressDialog.setMessage("Registering User...");
-        progressDialog.show();
+        if (isEmailValid(email) && isPasswordValid(password)) {
+            progressDialog.setMessage("Registering User...");
+            progressDialog.show();
 
-        if (cancel) {
-            focusView.requestFocus();
-        } else {
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
+            if (cancel) {
+                focusView.requestFocus();
+            } else {
+                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
 
-                    if (task.isSuccessful()) {
-                        Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
+                        if (task.isSuccessful()) {
+                            Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
+                        }
+
+                        progressDialog.hide();
                     }
-                }
-            });
+                });
+            }
         }
     }
 
