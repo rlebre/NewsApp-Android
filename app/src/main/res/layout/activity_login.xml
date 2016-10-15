@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
+            android:onClick="onClick"
             android:paddingBottom="15dp"
             android:paddingTop="15dp"
             android:text="@string/email" />
@@ -38,6 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
+            android:onClick="onClick"
             android:paddingBottom="15dp"
             android:paddingTop="15dp" />
 
@@ -56,6 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
+            android:onClick="onClick"
             android:paddingBottom="15dp"
             android:paddingTop="15dp"
             android:text="@string/action_register" />
@@ -66,6 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:linksClickable="true"
+            android:onClick="onClick"
             android:text="Not now"
             android:textAlignment="center" />
     </LinearLayout>
