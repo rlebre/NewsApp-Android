@@ -14,21 +14,62 @@
 
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_centerHorizontal="true"
         android:text="Large Text"
-        android:id="@+id/textView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
+        android:id="@+id/logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:id="@+id/logout_button"
         android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="Logout" />
 
+    <ToggleButton
+        android:id="@+id/tech_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logout_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Tech"
+        android:textOff="Tech off"
+        android:textOn="Tech on" />
 
+    <ToggleButton
+        android:id="@+id/sports_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tech_toggle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Sports"
+        android:textOff="Sports off"
+        android:textOn="Sports on" />
+
+    <ToggleButton
+        android:id="@+id/world_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sports_toggle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="World"
+        android:textOff="World off"
+        android:textOn="World on" />
+
+    <ToggleButton
+        android:id="@+id/science_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/world_toggle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Science"
+        android:textOff="Science off"
+        android:textOn="Science on" />
 </RelativeLayout>

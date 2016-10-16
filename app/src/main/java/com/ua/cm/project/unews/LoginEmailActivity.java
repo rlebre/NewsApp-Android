@@ -180,6 +180,7 @@ public class LoginEmailActivity extends LoginActivity implements LoaderCallbacks
                             } else {
                                 dumpActivityStart();
                                 Toast.makeText(getApplicationContext(), "LOGGED IN", Toast.LENGTH_LONG).show();
+                                finish();
                             }
                         }
                     });
