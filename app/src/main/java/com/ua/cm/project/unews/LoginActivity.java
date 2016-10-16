@@ -212,6 +212,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "signInWithCredential:ENTREIII");
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -221,7 +222,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Authentication failed. " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            LoginManager.getInstance().logOut();
                         } else {
                             Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
                             dumpActivityStart();

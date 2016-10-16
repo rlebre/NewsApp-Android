@@ -5,8 +5,6 @@
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -23,7 +21,9 @@
 
 
         <!-- Shows an animation when app starts-->
-        <activity android:name=".SplashScreenActivity" android:theme="@style/SplashScreenTheme">
+        <activity
+            android:name=".SplashScreenActivity"
+            android:theme="@style/SplashScreenTheme">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -72,6 +72,15 @@
             android:name=".DumpActivity"
             android:label="@string/title_activity_dump"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".services.Notifications"
+            android:enabled="true"
+            android:exported="true">>
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
     </application>
 

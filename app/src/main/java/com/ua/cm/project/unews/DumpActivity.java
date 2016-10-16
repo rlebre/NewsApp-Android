@@ -2,10 +2,6 @@ package com.ua.cm.project.unews;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,15 +10,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 public class DumpActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private DatabaseReference databaseReference;
+    private DatabaseReference mDatabaseReference;
     private FirebaseAuth mAuth;
 
     private ToggleButton techToggle;
@@ -33,37 +35,38 @@ public class DumpActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_dump);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mAuth = FirebaseAuth.getInstance();
         final TextView textView = (TextView) findViewById(R.id.textView);
 
-
-        FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    textView.setText(user.getEmail());
-                    Log.d("USSER", user.getEmail() + ".");
-                } else {
-                    textView.setText("USER NULL");
-                }
-            }
-        };
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            textView.setText(user.getEmail());
+            Log.d("USSER", user.getEmail() + ".");
+        } else {
+            textView.setText("USER NULL");
+        }
 
         Button logout = (Button) findViewById(R.id.logout_button);
-
+        logout.setOnClickListener(this);
 
         techToggle = (ToggleButton) findViewById(R.id.tech_toggle);
         sportsToggle = (ToggleButton) findViewById(R.id.sports_toggle);
         worldToggle = (ToggleButton) findViewById(R.id.world_toggle);
         scienceToggle = (ToggleButton) findViewById(R.id.science_toggle);
 
+        techToggle.setOnClickListener(this);
+        sportsToggle.setOnClickListener(this);
+        worldToggle.setOnClickListener(this);
+        scienceToggle.setOnClickListener(this);
         //------------------------------------------------------------------------------
 
-        databaseReference = FirebaseDatabase.getInstance().getReference();
+        techToggle.setChecked(true);
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
@@ -81,17 +84,56 @@ public class DumpActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.tech_toggle:
+                checkValuesToggled();
                 break;
 
             case R.id.sports_toggle:
+                checkValuesToggled();
                 break;
 
             case R.id.world_toggle:
+                checkValuesToggled();
                 break;
 
             case R.id.science_toggle:
+                checkValuesToggled();
                 break;
 
         }
+    }
+
+    /*  private void checkValuesToggled() {
+          String uid = mAuth.getCurrentUser().getUid();
+          Log.d("AAAAAA", uid);
+          mDatabaseReference.child("users").child(uid).setValue(null);
+          String key = mDatabaseReference.child("users").child(uid).child("categories").getKey();
+          Log.d("AAAAAA", key);
+          List<String> map = new LinkedList<>();
+          map.add("aaaa");
+          map.add("aaaa");
+          map.add("aaaa");
+          Map<String, Object> childUpdates = new HashMap<>();
+          childUpdates.put("users/" + uid + "/categories/", map);
+          mDatabaseReference.s(childUpdates);
+
+      }*/
+    private void checkValuesToggled() {
+        String uid = mAuth.getCurrentUser().getUid();
+
+        List<String> map = new LinkedList<>();
+
+        if (techToggle.isChecked())
+            map.add("tech");
+        if (sportsToggle.isChecked())
+            map.add("sports");
+        if (worldToggle.isChecked())
+            map.add("world");
+        if (scienceToggle.isChecked())
+            map.add("science");
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("users/" + uid + "/categories/", map);
+        mDatabaseReference.updateChildren(childUpdates);
+
     }
 }

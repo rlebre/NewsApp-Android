@@ -36,9 +36,11 @@
         android:layout_below="@+id/logout_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="onClick"
         android:text="Tech"
-        android:textOff="Tech off"
-        android:textOn="Tech on" />
+        android:textOff="Tech"
+        android:textOn="Tech" />
 
     <ToggleButton
         android:id="@+id/sports_toggle"
@@ -47,20 +49,24 @@
         android:layout_below="@+id/tech_toggle"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="onClick"
         android:text="Sports"
-        android:textOff="Sports off"
-        android:textOn="Sports on" />
+        android:textOff="Sports"
+        android:textOn="Sports" />
 
     <ToggleButton
         android:id="@+id/world_toggle"
+        android:name="World"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/sports_toggle"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="World"
-        android:textOff="World off"
-        android:textOn="World on" />
+        android:background="@drawable/rounded_button"
+        android:onClick="onClick"
+        android:textOff="World"
+        android:textOn="World" />
 
     <ToggleButton
         android:id="@+id/science_toggle"
@@ -69,7 +75,9 @@
         android:layout_below="@+id/world_toggle"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="onClick"
         android:text="Science"
-        android:textOff="Science off"
-        android:textOn="Science on" />
+        android:textOff="Science"
+        android:textOn="Science" />
 </RelativeLayout>
