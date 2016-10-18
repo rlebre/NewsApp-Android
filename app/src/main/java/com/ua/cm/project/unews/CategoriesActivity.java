@@ -102,21 +102,6 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    /*  private void checkValuesToggled() {
-          String uid = mAuth.getCurrentUser().getUid();
-          Log.d("AAAAAA", uid);
-          mDatabaseReference.child("users").child(uid).setValue(null);
-          String key = mDatabaseReference.child("users").child(uid).child("categories").getKey();
-          Log.d("AAAAAA", key);
-          List<String> map = new LinkedList<>();
-          map.add("aaaa");
-          map.add("aaaa");
-          map.add("aaaa");
-          Map<String, Object> childUpdates = new HashMap<>();
-          childUpdates.put("users/" + uid + "/categories/", map);
-          mDatabaseReference.s(childUpdates);
-
-      }*/
     private void checkValuesToggled() {
         String uid = mAuth.getCurrentUser().getUid();
 
