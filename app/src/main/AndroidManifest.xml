@@ -69,8 +69,8 @@
         </activity>
 
         <activity
-            android:name=".DumpActivity"
-            android:label="@string/title_activity_dump"
+            android:name=".CategoriesActivity"
+            android:label="@string/title_activity_categories"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service

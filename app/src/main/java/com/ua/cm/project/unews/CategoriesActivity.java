@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class DumpActivity extends AppCompatActivity implements View.OnClickListener {
+public class CategoriesActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DatabaseReference mDatabaseReference;
     private FirebaseAuth mAuth;
@@ -36,7 +36,7 @@ public class DumpActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-        setContentView(R.layout.activity_dump);
+        setContentView(R.layout.activity_categories);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

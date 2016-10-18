@@ -15,7 +15,7 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.ua.cm.project.unews.DumpActivity;
+import com.ua.cm.project.unews.CategoriesActivity;
 import com.ua.cm.project.unews.R;
 
 public class Notifications extends FirebaseMessagingService {
@@ -49,7 +49,7 @@ public class Notifications extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, DumpActivity.class);
+        Intent intent = new Intent(this, CategoriesActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 

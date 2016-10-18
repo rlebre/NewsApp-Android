@@ -120,7 +120,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 6;
+        return password.length() >= 6;
     }
 
     @Override
