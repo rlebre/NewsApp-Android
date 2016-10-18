@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 /**
  * A login screen that offers login via email/password.
@@ -104,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     if (task.isSuccessful()) {
                         Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
                         mAuth.getCurrentUser().sendEmailVerification();
-                        saveName(mAuth.getCurrentUser().getUid(), mNameView.getText().toString());
+                        saveName(mNameView.getText().toString());
                         finish();
                     } else {
                         Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
@@ -120,7 +121,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() >= 6;
+        return password.length() > 6;
     }
 
     @Override
@@ -133,8 +134,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-    private void saveName(String uid, String name) {
-        mDatabaseReference.child("users").child(uid).child("name").setValue(name);
+    private void saveName(String name) {
+        String uid = mAuth.getCurrentUser().getUid();
+        mDatabaseReference.child("users").child(uid).child("profile").child("name").setValue(name);
+        mDatabaseReference.child("users").child(uid).child("profile").child("email").setValue(mAuth.getCurrentUser().getEmail());
+        mDatabaseReference.child("users").child(uid).child("profile").child("reg_timestamp").setValue(ServerValue.TIMESTAMP);
     }
 }
 
