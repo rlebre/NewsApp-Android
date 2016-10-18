@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,45 +28,51 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     private DatabaseReference mDatabaseReference;
     private FirebaseAuth mAuth;
 
-    private ToggleButton techToggle;
-    private ToggleButton sportsToggle;
-    private ToggleButton worldToggle;
-    private ToggleButton scienceToggle;
+    private ArrayList<ToggleButton> toggleButtons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_categories);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         mAuth = FirebaseAuth.getInstance();
         final TextView textView = (TextView) findViewById(R.id.textView);
 
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            textView.setText(user.getEmail());
+            String username = user.getDisplayName() != null ? user.getDisplayName() : user.getEmail();
+
+            textView.setText("Hi, " + username);
+            textView.append("\nPlease choose favorite categories.");
             Log.d("USSER", user.getEmail() + ".");
         } else {
-            textView.setText("USER NULL");
+            textView.setText("Hi, please choose favorite categories.");
         }
 
         Button logout = (Button) findViewById(R.id.logout_button);
         logout.setOnClickListener(this);
 
-        techToggle = (ToggleButton) findViewById(R.id.tech_toggle);
-        sportsToggle = (ToggleButton) findViewById(R.id.sports_toggle);
-        worldToggle = (ToggleButton) findViewById(R.id.world_toggle);
-        scienceToggle = (ToggleButton) findViewById(R.id.science_toggle);
+        toggleButtons = new ArrayList<>();
 
-        techToggle.setOnClickListener(this);
-        sportsToggle.setOnClickListener(this);
-        worldToggle.setOnClickListener(this);
-        scienceToggle.setOnClickListener(this);
-        //------------------------------------------------------------------------------
+        toggleButtons.add((ToggleButton) findViewById(R.id.tech_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.sports_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.world_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.science_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.finance_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.society_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.politics_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.entertainment_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.health_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.travel_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.weather_toggle));
+        toggleButtons.add((ToggleButton) findViewById(R.id.food_toggle));
 
-        techToggle.setChecked(true);
+
+        for (ToggleButton t : toggleButtons) {
+            t.setOnClickListener(this);
+        }
+
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -82,23 +89,11 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 finish();
                 break;
-
-            case R.id.tech_toggle:
+            case R.id.categories_save_button:
                 checkValuesToggled();
+                startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
+                finish();
                 break;
-
-            case R.id.sports_toggle:
-                checkValuesToggled();
-                break;
-
-            case R.id.world_toggle:
-                checkValuesToggled();
-                break;
-
-            case R.id.science_toggle:
-                checkValuesToggled();
-                break;
-
         }
     }
 
@@ -107,15 +102,11 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
 
         List<String> map = new LinkedList<>();
 
-        if (techToggle.isChecked())
-            map.add("tech");
-        if (sportsToggle.isChecked())
-            map.add("sports");
-        if (worldToggle.isChecked())
-            map.add("world");
-        if (scienceToggle.isChecked())
-            map.add("science");
-
+        for (ToggleButton t : toggleButtons) {
+            if (t.isChecked()) {
+                map.add(t.getText().toString().toLowerCase());
+            }
+        }
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("users/" + uid + "/categories/", map);
         mDatabaseReference.updateChildren(childUpdates);

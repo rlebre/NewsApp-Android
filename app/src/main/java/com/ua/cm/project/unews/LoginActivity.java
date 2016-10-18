@@ -32,6 +32,9 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 import java.util.Arrays;
 
@@ -39,6 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     protected FirebaseAuth mAuth;
     protected FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference mDatabaseReference;
     static final String TAG = "LOGIN_ACTIVITY";
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -90,6 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -107,7 +112,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    dumpActivityStart();
+                    startCategoriesActivity();
                 } else {
                     //startActivity(new Intent(LoginActivity.this, LoginActivity.class));
                 }
@@ -140,7 +145,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-
+                Log.d("LOG", result.getStatus().getStatusMessage());
             }
         } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
@@ -167,14 +172,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                         } else {
-                            dumpActivityStart();
+                            saveInfo(mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getEmail());
+                            startCategoriesActivity();
+                            finish();
                         }
                     }
                 });
     }
 
 
-    public void dumpActivityStart() {
+    public void startCategoriesActivity() {
         startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
     }
 
@@ -191,7 +198,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.not_now_hyperlink:
                 //signInAnonymous();
-                dumpActivityStart();
+                startCategoriesActivity();
                 break;
 
             case R.id.login_google_button:
@@ -220,7 +227,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             LoginManager.getInstance().logOut();
                         } else {
                             Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
-                            dumpActivityStart();
+                            startCategoriesActivity();
+                            saveInfo(mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getEmail());
+                            finish();
                         }
                     }
                 });
@@ -239,5 +248,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     }
                 });
+    }
+
+    private void saveInfo(String uid, String name, String email) {
+        mDatabaseReference.child("users").child(uid).child("profile").child("name").setValue(name);
+        mDatabaseReference.child("users").child(uid).child("profile").child("email").setValue(email);
+        mDatabaseReference.child("users").child(uid).child("profile").child("reg_timestamp").setValue(ServerValue.TIMESTAMP);
     }
 }
