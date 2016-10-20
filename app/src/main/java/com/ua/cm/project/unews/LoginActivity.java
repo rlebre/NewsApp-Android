@@ -32,9 +32,13 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
@@ -51,6 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private CallbackManager mCallbackManager;
     private LoginButton loginButton;
     private static final int RC_SIGN_IN = 9001;
+    private boolean isFavChosen;
 
 
     @Override
@@ -112,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    startCategoriesActivity();
+                    startNextActivity();
                 } else {
                     //startActivity(new Intent(LoginActivity.this, LoginActivity.class));
                 }
@@ -173,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                         } else {
                             saveInfo(mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getEmail());
-                            startCategoriesActivity();
+                            startNextActivity();
                             finish();
                         }
                     }
@@ -181,8 +186,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    public void startCategoriesActivity() {
-        startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
+    public void startNextActivity() {
+        if (mAuth.getCurrentUser() == null) {
+            startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
+        } else {
+            DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+            Query query = mFirebaseDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    isFavChosen = dataSnapshot.exists();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("ERROR", databaseError.getMessage());
+                }
+            });
+
+            if (isFavChosen) {
+                startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
+            } else {
+                startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
+            }
+        }
+        finish();
     }
 
     @Override
@@ -198,7 +226,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.not_now_hyperlink:
                 //signInAnonymous();
-                startCategoriesActivity();
+                startNextActivity();
                 break;
 
             case R.id.login_google_button:
@@ -227,7 +255,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             LoginManager.getInstance().logOut();
                         } else {
                             Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
-                            startCategoriesActivity();
+                            startNextActivity();
                             saveInfo(mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getEmail());
                             finish();
                         }

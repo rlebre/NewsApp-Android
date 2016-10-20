@@ -14,8 +14,12 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +79,24 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
 
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
+        Query query = mDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot s : dataSnapshot.getChildren()) {
+                    for (ToggleButton t : toggleButtons) {
+                        if (t.getText().toString().equalsIgnoreCase((String) s.getValue())) {
+                            t.setChecked(true);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("ERROR", databaseError.getMessage());
+            }
+        });
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
         }
