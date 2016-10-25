@@ -22,6 +22,24 @@
     <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
     <string name="name_hint">Name (optional)</string>
     <string name="logo">logo</string>
-    <string name="title_activity_dump">DumpActivity</string>
+    <string name="title_activity_categories">CategoriesActivity</string>
+    <string name="society">Society</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="sports">Sports</string>
+    <string name="science">Science</string>
+    <string name="politics">Politics</string>
+    <string name="health">Health</string>
+    <string name="weather">Weather</string>
+    <string name="food">Food</string>
+    <string name="travel">Travel</string>
+    <string name="finance">Finance</string>
+    <string name="save">Save</string>
+    <string name="hi">Hi</string>
+    <string name="cancel">Cancel</string>
+
+
+    <string name="topics_topics">Topics</string>
+    <string name="topics_feed">Feed</string>
+    <string name="topics_local">Local</string>
 
 </resources>

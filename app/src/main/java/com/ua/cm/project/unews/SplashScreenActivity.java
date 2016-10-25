@@ -1,19 +1,24 @@
 package com.ua.cm.project.unews;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.animation.Animation;
 import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
+    boolean isFavChosen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +34,25 @@ public class SplashScreenActivity extends AppCompatActivity {
                 if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                     startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
                 } else {
-                    startActivity(new Intent(SplashScreenActivity.this, DumpActivity.class));
+                    DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+                    Query query = mFirebaseDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            isFavChosen = dataSnapshot.exists();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.d("ERROR", databaseError.getMessage());
+                        }
+                    });
+
+                    if (isFavChosen) {
+                        startActivity(new Intent(SplashScreenActivity.this, CategoriesActivity.class));
+                    } else {
+                        startActivity(new Intent(SplashScreenActivity.this, TopicsActivity.class));
+                    }
                 }
 
                 finish();

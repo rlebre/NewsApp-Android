@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 /**
  * A login screen that offers login via email/password.
@@ -59,6 +60,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         findViewById(R.id.register_button).setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.register_button:
+                attemptRegister();
+                break;
+        }
     }
 
     private void attemptRegister() {
@@ -104,7 +115,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     if (task.isSuccessful()) {
                         Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
                         mAuth.getCurrentUser().sendEmailVerification();
-                        saveName(mAuth.getCurrentUser().getUid(), mNameView.getText().toString());
+                        saveInfo(mNameView.getText().toString(), mAuth.getCurrentUser().getEmail());
                         finish();
                     } else {
                         Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
@@ -114,7 +125,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-
     private boolean isEmailValid(String email) {
         return email.contains("@") && email.contains(".");
     }
@@ -123,18 +133,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         return password.length() > 6;
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.register_button:
-                attemptRegister();
-                break;
-        }
+    private void saveInfo(String name, String email) {
+        String uid = mAuth.getCurrentUser().getUid();
+        mDatabaseReference.child("users").child(uid).child("profile").child("name").setValue(name);
+        mDatabaseReference.child("users").child(uid).child("profile").child("email").setValue(email);
+        mDatabaseReference.child("users").child(uid).child("profile").child("reg_timestamp").setValue(ServerValue.TIMESTAMP);
     }
 
-
-    private void saveName(String uid, String name) {
-        mDatabaseReference.child("users").child(uid).child("name").setValue(name);
-    }
 }
 

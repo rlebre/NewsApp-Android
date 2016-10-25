@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/hi"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/colorAccent" />
+
+        <ToggleButton
+            android:id="@+id/world_toggle"
+            android:name="World"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="90dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="World"
+            android:textOn="World" />
+
+        <ToggleButton
+            android:id="@+id/science_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/world_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:text="@string/science"
+            android:textOff="Science"
+            android:textOn="Science" />
+
+        <ToggleButton
+            android:id="@+id/finance_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/science_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="@string/finance"
+            android:textOn="@string/finance" />
+
+        <ToggleButton
+            android:id="@+id/politics_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/finance_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="@string/politics"
+            android:textOn="@string/politics" />
+
+        <ToggleButton
+            android:id="@+id/health_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/politics_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="@string/health"
+            android:textOn="@string/health" />
+
+        <ToggleButton
+            android:id="@+id/weather_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/health_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="@string/weather"
+            android:textOn="@string/weather" />
+
+        <Button
+            android:id="@+id/logout_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:text="@string/cancel" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/colorPrimary">
+
+        <ToggleButton
+            android:id="@+id/tech_toggle"
+            android:name="World"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="90dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="Tech"
+            android:textOn="Tech" />
+
+        <ToggleButton
+            android:id="@+id/sports_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tech_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:text="@string/sports"
+            android:textOff="Sports"
+            android:textOn="Sports" />
+
+        <ToggleButton
+            android:id="@+id/society_toggle"
+            android:name="@string/society"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sports_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="@string/society"
+            android:textOn="@string/society" />
+
+        <ToggleButton
+            android:id="@+id/entertainment_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/society_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:text="@string/entertainment"
+            android:textOff="Entertainment"
+            android:textOn="Entertainment" />
+
+
+        <ToggleButton
+            android:id="@+id/travel_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/entertainment_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="@string/travel"
+            android:textOn="@string/travel" />
+
+        <ToggleButton
+            android:id="@+id/food_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/travel_toggle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rounded_button"
+            android:onClick="onClick"
+            android:textOff="@string/food"
+            android:textOn="@string/food" />
+
+
+        <Button
+            android:id="@+id/categories_save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="onClick"
+            android:text="@string/save" />
+    </RelativeLayout>
+</LinearLayout>
+
+
