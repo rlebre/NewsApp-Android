@@ -37,4 +37,9 @@
     <string name="hi">Hi</string>
     <string name="cancel">Cancel</string>
 
+
+    <string name="topics_topics">Topics</string>
+    <string name="topics_feed">Feed</string>
+    <string name="topics_local">Local</string>
+
 </resources>
