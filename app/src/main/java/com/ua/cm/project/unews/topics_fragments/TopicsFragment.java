@@ -12,6 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.ua.cm.project.unews.R;
 import com.ua.cm.project.unews.model.News;
 import com.ua.cm.project.unews.model.NewsAdapter;
@@ -25,6 +32,7 @@ import java.util.List;
 
 public class TopicsFragment extends Fragment {
     private static final String TAG = TopicsFragment.class.getSimpleName();
+    private List<News> data;
 
     private RecyclerView mRecyclerView;
     private NewsAdapter newsAdapter;
@@ -32,6 +40,7 @@ public class TopicsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        data = new ArrayList<>();
     }
 
     @Override
@@ -42,7 +51,6 @@ public class TopicsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         newsAdapter = new NewsAdapter(getActivity(), getData());
-
         mRecyclerView.setAdapter(newsAdapter);
 
         return layout;
@@ -54,17 +62,36 @@ public class TopicsFragment extends Fragment {
         //mCardView = (CardView) view.findViewById(R.id.cardview);
     }
 
-    public static List<News> getData() {
-        List<News> data = new ArrayList<>();
-        int[] icons = {R.drawable.com_facebook_favicon_blue, R.drawable.com_facebook_favicon_blue, R.drawable.com_facebook_favicon_blue, R.drawable.com_facebook_favicon_blue, R.drawable.com_facebook_favicon_blue};
-        String[] titles = {"Title 1", "Title 2", "Title 3", "Title 4", "Title 5"};
-        String[] descriptions = {"Description 1", "Description 2", "Description 3", "Description 4", "Description 5"};
-        String[] categories = {"Category 1", "Category 2", "Category 3", "Category 4", "Category 5"};
-        String[] urls = {"URL 1", "URL 2", "URL 3", "URL 4", "URL 5"};
+    public List<News> getData() {
 
-        for (int i = 0; i < icons.length && i < titles.length && i < descriptions.length; i++) {
-            data.add(i, new News(titles[i], descriptions[i], categories[i], urls[i]));
-        }
+        DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        Query query = mFirebaseDatabaseReference.child("feed_top").orderByChild("pub_date");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                data.clear();
+                for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
+                    String title = (String) messageSnapshot.child("title").getValue();
+                    String category = (String) messageSnapshot.child("category").getValue();
+                    String creator = (String) messageSnapshot.child("creator").getValue();
+                    String description = (String) messageSnapshot.child("description").getValue();
+                    String link = (String) messageSnapshot.child("link").getValue();
+                    String pub_date = (String) messageSnapshot.child("pub_date").getValue();
+                    String service = (String) messageSnapshot.child("service").getValue();
+
+                    String descriptionShort = description.length() < 85 ? description : description.substring(0, 85) + "...";
+                    News n = new News(title, descriptionShort, description, creator, service, pub_date, category, link);
+                    data.add(n);
+                }
+
+                newsAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("ERROR", databaseError.getMessage());
+            }
+        });
 
         return data;
     }

@@ -1,6 +1,8 @@
 package com.ua.cm.project.unews.model;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,9 @@ import android.widget.TextView;
 
 import com.ua.cm.project.unews.R;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,8 +43,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         News news = newsList.get(position);
+
         holder.titleTextView.setText(news.getTitle());
-        holder.descriptionTextView.setText(news.getDescription());
+        holder.descriptionTextView.setText(news.getShortDescription());
     }
 
     @Override

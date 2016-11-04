@@ -12,15 +12,17 @@ public class News {
     private String pub_date;
     private String category;
     private String link;
+    private String shortDescription;
 
-    public News(String title, String description, String category, String link) {
+    public News(String title, String shortDescription, String description, String category, String link) {
         this.title = title;
         this.description = description;
         this.category = category;
         this.link = link;
+        this.shortDescription = shortDescription;
     }
 
-    public News(String title, String description, String author, String service, String pub_date, String category, String link) {
+    public News(String title, String shortDescription, String description, String author, String service, String pub_date, String category, String link) {
         this.title = title;
         this.description = description;
         this.author = author;
@@ -28,6 +30,7 @@ public class News {
         this.pub_date = pub_date;
         this.category = category;
         this.link = link;
+        this.shortDescription = shortDescription;
     }
 
     public String getTitle() {
@@ -84,5 +87,27 @@ public class News {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public void setShortDescription(String short_description) {
+        this.shortDescription = short_description;
+    }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", author='" + author + '\'' +
+                ", service='" + service + '\'' +
+                ", pub_date='" + pub_date + '\'' +
+                ", category='" + category + '\'' +
+                ", link='" + link + '\'' +
+                ", shortDescription='" + shortDescription + '\'' +
+                '}';
     }
 }
