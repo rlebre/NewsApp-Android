@@ -1,10 +1,12 @@
 package com.ua.cm.project.unews.model;
 
+import java.io.Serializable;
+
 /**
  * Created by rui on 10/27/16.
  */
 
-public class News {
+public class News implements Serializable {
     private String title;
     private String description;
     private String author;
@@ -13,6 +15,7 @@ public class News {
     private String category;
     private String link;
     private String shortDescription;
+    private String imageLink;
 
     public News(String title, String shortDescription, String description, String category, String link) {
         this.title = title;
@@ -97,6 +100,14 @@ public class News {
         this.shortDescription = short_description;
     }
 
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
+    }
+
     @Override
     public String toString() {
         return "News{" +
@@ -108,6 +119,7 @@ public class News {
                 ", category='" + category + '\'' +
                 ", link='" + link + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +
+                ", imageLink='" + imageLink + '\'' +
                 '}';
     }
 }

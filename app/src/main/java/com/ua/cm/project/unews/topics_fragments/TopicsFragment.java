@@ -1,18 +1,18 @@
 package com.ua.cm.project.unews.topics_fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ua.cm.project.unews.R;
+import com.ua.cm.project.unews.ShowNewsFragment;
 import com.ua.cm.project.unews.model.News;
 import com.ua.cm.project.unews.model.NewsAdapter;
 
@@ -37,10 +38,13 @@ public class TopicsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private NewsAdapter newsAdapter;
 
+    public static View.OnClickListener myOnClickListener;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         data = new ArrayList<>();
+        myOnClickListener = new MyOnClickListener();
     }
 
     @Override
@@ -60,6 +64,14 @@ public class TopicsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //mCardView = (CardView) view.findViewById(R.id.cardview);
+
+        /*
+        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            public void onBackStackChanged() {
+                newsAdapter.notifyDataSetChanged();
+            }
+        });
+        */
     }
 
     public List<News> getData() {
@@ -94,5 +106,29 @@ public class TopicsFragment extends Fragment {
         });
 
         return data;
+    }
+
+    @Override
+    public void onResume() {
+        newsAdapter.notifyDataSetChanged();
+        super.onResume();
+    }
+
+
+    private class MyOnClickListener implements View.OnClickListener {
+
+
+        @Override
+        public void onClick(View v) {
+            int selectedItemPosition = mRecyclerView.getChildAdapterPosition(v);
+
+            ShowNewsFragment frag = ShowNewsFragment.newInstance(data.get(selectedItemPosition));
+
+            getFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.topics_layout, frag, "NewFragmentTag")
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

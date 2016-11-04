@@ -1,5 +1,7 @@
 package com.ua.cm.project.unews;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
@@ -8,6 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
+import com.ua.cm.project.unews.firebase.Firebase;
 
 public class TopicsActivity extends AppCompatActivity {
 
@@ -57,7 +64,13 @@ public class TopicsActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_logout) {
+            FirebaseAuth.getInstance().signOut();
+            LoginManager.getInstance().logOut();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
+
 
         return super.onOptionsItemSelected(item);
     }
