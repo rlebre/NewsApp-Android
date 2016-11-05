@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ua.cm.project.unews.R;
-import com.ua.cm.project.unews.TopicsActivity;
 import com.ua.cm.project.unews.topics_fragments.TopicsFragment;
 
 import java.io.IOException;

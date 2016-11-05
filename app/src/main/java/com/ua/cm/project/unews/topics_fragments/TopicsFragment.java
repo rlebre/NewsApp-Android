@@ -17,11 +17,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.ua.cm.project.unews.CategoriesActivity;
 import com.ua.cm.project.unews.R;
 import com.ua.cm.project.unews.ShowNewsActivity;
-import com.ua.cm.project.unews.SplashScreenActivity;
-import com.ua.cm.project.unews.TopicsActivity;
 import com.ua.cm.project.unews.model.News;
 import com.ua.cm.project.unews.model.NewsAdapter;
 
