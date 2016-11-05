@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
 
+import com.facebook.FacebookSdk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,6 +24,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_splash_screen);
 
 
@@ -40,6 +42,13 @@ public class SplashScreenActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             isFavChosen = dataSnapshot.exists();
+
+                            if (!isFavChosen) {
+                                startActivity(new Intent(SplashScreenActivity.this, CategoriesActivity.class));
+                            } else {
+                                startActivity(new Intent(SplashScreenActivity.this, TopicsActivity.class));
+                            }
+                            finish();
                         }
 
                         @Override
@@ -47,15 +56,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                             Log.d("ERROR", databaseError.getMessage());
                         }
                     });
-
-                    if (isFavChosen) {
-                        startActivity(new Intent(SplashScreenActivity.this, CategoriesActivity.class));
-                    } else {
-                        startActivity(new Intent(SplashScreenActivity.this, TopicsActivity.class));
-                    }
                 }
-
-                finish();
             }
         }, 2000);
     }

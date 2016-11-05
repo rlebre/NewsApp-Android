@@ -76,7 +76,8 @@
 
         <activity
             android:name=".TopicsActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ShowNewsActivity"></activity>
     </application>
 
 </manifest>
