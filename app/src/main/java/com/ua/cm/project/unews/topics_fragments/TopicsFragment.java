@@ -46,6 +46,7 @@ public class TopicsFragment extends Fragment {
         data = new ArrayList<>();
         myOnClickListener = new MyOnClickListener();
         isFavCategoriesFetched = false;
+        getFavouriteCategories();
     }
 
     private void getFavouriteCategories() {
@@ -75,7 +76,6 @@ public class TopicsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.topics, container, false);
         favouriteCategories = new ArrayList<>();
-        getFavouriteCategories();
 
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.news_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -108,7 +108,7 @@ public class TopicsFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 data.clear();
-                while (!isFavCategoriesFetched) ;
+                //while (!isFavCategoriesFetched) Log.d("LOOP", "");
 
                 for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
                     String title = (String) messageSnapshot.child("title").getValue();
