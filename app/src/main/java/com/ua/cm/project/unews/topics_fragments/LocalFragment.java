@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ua.cm.project.unews.R;
@@ -40,7 +39,7 @@ public class LocalFragment extends Fragment implements LocationListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.topics, container, false);
+        View view = inflater.inflate(R.layout.local, container, false);
 
         /// loc = new MyLocationListener();
         myManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -84,11 +83,13 @@ public class LocalFragment extends Fragment implements LocationListener {
     }*/
 
     private String getCurrentCity(double latitude, double longitude) throws IOException {
-        Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
-        List<Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
-        if (addresses.size() > 0) {
-            System.out.println(addresses.get(0).getLocality());
-            return addresses.get(0).getLocality();
+        if (getContext() != null) {
+            Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
+            List<Address> addresses = gcd.getFromLocation(latitude, longitude, 1);
+            if (addresses.size() > 0) {
+                System.out.println(addresses.get(0).getLocality());
+                return addresses.get(0).getLocality();
+            }
         }
         return "Not Found";
     }
