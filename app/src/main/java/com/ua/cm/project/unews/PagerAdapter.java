@@ -15,9 +15,9 @@ import com.ua.cm.project.unews.topics_fragments.TopicsFragment;
 public class PagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
 
-    public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+    public PagerAdapter(FragmentManager fm, int numOfTabs) {
         super(fm);
-        this.mNumOfTabs = NumOfTabs;
+        this.mNumOfTabs = numOfTabs;
     }
 
     @Override
@@ -25,17 +25,13 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                TopicsFragment tab1 = new TopicsFragment();
-                return tab1;
+                return TopicsFragment.newInstance();
             case 1:
-                FeedFragment tab2 = new FeedFragment();
-                return tab2;
+                return FeedFragment.newInstance();
             case 2:
-                LocalFragment tab3 = new LocalFragment();
-                return tab3;
-            default:
-                return null;
+                return LocalFragment.newInstance();
         }
+        return null;
     }
 
     @Override

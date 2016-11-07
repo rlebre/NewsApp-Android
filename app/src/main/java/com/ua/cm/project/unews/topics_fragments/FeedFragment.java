@@ -7,15 +7,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ua.cm.project.unews.R;
+
 /**
  * Created by rui on 10/25/16.
  */
 
 public class FeedFragment extends Fragment {
 
-    @Nullable
+    public static FeedFragment newInstance() {
+        return new FeedFragment();
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.feed, container, false);
+
+        return view;
     }
 }

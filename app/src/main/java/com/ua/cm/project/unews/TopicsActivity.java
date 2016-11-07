@@ -2,8 +2,9 @@ package com.ua.cm.project.unews;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,8 +13,12 @@ import android.view.MenuItem;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.ua.cm.project.unews.topics_fragments.FeedFragment;
+import com.ua.cm.project.unews.topics_fragments.LocalFragment;
+import com.ua.cm.project.unews.topics_fragments.TopicsFragment;
 
 public class TopicsActivity extends AppCompatActivity {
+    FragmentPagerAdapter adapterViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +27,10 @@ public class TopicsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ViewPager vpPager = (ViewPager) findViewById(R.id.pager);
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), 3);
+        vpPager.setAdapter(adapterViewPager);
+/*
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Topics"));
         tabLayout.addTab(tabLayout.newTab().setText("Feed"));
@@ -47,7 +56,7 @@ public class TopicsActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });
+        });*/
     }
 
     @Override
@@ -70,6 +79,53 @@ public class TopicsActivity extends AppCompatActivity {
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private static class MyPagerAdapter extends FragmentPagerAdapter {
+        private static int mNumOfTabs;
+
+        public MyPagerAdapter(FragmentManager fm, int numOfTabs) {
+            super(fm);
+            this.mNumOfTabs = numOfTabs;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    return TopicsFragment.newInstance();
+                case 1:
+                    return FeedFragment.newInstance();
+                case 2:
+                    return LocalFragment.newInstance();
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return mNumOfTabs;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            String title = "";
+
+            switch (position) {
+                case 0:
+                    title = "Topics";
+                    break;
+                case 1:
+                    title = "Feed";
+                    break;
+                case 2:
+                    title = "Local";
+                    break;
+            }
+
+            return title;
+        }
     }
 }
 

@@ -40,13 +40,19 @@ public class TopicsFragment extends Fragment {
     private boolean isFavCategoriesFetched;
     private List<String> favouriteCategories;
 
+    public static TopicsFragment newInstance() {
+        return new TopicsFragment();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         data = new ArrayList<>();
         myOnClickListener = new MyOnClickListener();
         isFavCategoriesFetched = false;
         getFavouriteCategories();
+        favouriteCategories = new ArrayList<>();
     }
 
     private void getFavouriteCategories() {
@@ -75,7 +81,6 @@ public class TopicsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.topics, container, false);
-        favouriteCategories = new ArrayList<>();
 
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.news_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

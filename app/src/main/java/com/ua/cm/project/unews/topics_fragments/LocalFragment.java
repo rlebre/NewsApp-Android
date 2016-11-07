@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ua.cm.project.unews.R;
@@ -37,51 +36,34 @@ public class LocalFragment extends Fragment implements LocationListener {
     private LocationManager locationManager;
     private String provider;
 
+    public static LocalFragment newInstance() {
+
+
+        return new LocalFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        myManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        provider = locationManager.getBestProvider(criteria, false);
+
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.topics, container, false);
-
-        /// loc = new MyLocationListener();
-        myManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return null;
-        }
-        //myManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, loc);
-
-        /*try {
-            Log.d("CurrentCity: ", getCurrentCity());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-
-        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-
-        Criteria criteria = new Criteria();
-        provider = locationManager.getBestProvider(criteria, false);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
-/*
-        if (location != null) {
-            System.out.println("Provider " + provider + " has been selected.");
-            onLocationChanged(location);
-        }*/
+        View view = inflater.inflate(R.layout.local, container, false);
 
         return view;
     }
-
-
-   /* private String getCurrentCity() throws IOException {
-        Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
-        List<Address> addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-        if (addresses.size() > 0) {
-            System.out.println(addresses.get(0).getLocality());
-            return addresses.get(0).getLocality();
-        }
-        return "Not Found";
-    }*/
 
     private String getCurrentCity(double latitude, double longitude) throws IOException {
         Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
