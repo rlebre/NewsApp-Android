@@ -28,10 +28,6 @@ public class TopicsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-      /*  ViewPager vpPager = (ViewPager) findViewById(R.id.pager);
-        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), 3);
-        vpPager.setAdapter(adapterViewPager);
-*/
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Topics"));
         tabLayout.addTab(tabLayout.newTab().setText("Feed"));
@@ -69,15 +65,18 @@ public class TopicsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_logout) {
-            FirebaseAuth.getInstance().signOut();
-            LoginManager.getInstance().logOut();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+        switch (id) {
+            case R.id.action_settings:
+                startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
+                finish();
+                break;
+            case R.id.action_logout:
+                FirebaseAuth.getInstance().signOut();
+                LoginManager.getInstance().logOut();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+                break;
         }
-
 
         return super.onOptionsItemSelected(item);
     }

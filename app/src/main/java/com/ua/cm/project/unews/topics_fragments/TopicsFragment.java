@@ -91,20 +91,6 @@ public class TopicsFragment extends Fragment {
         return layout;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        //mCardView = (CardView) view.findViewById(R.id.cardview);
-
-        /*
-        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            public void onBackStackChanged() {
-                newsAdapter.notifyDataSetChanged();
-            }
-        });
-        */
-    }
-
     public List<News> getData() {
 
         DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
