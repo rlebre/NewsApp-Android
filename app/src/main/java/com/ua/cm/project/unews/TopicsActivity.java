@@ -2,6 +2,7 @@ package com.ua.cm.project.unews;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -27,10 +28,10 @@ public class TopicsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ViewPager vpPager = (ViewPager) findViewById(R.id.pager);
+      /*  ViewPager vpPager = (ViewPager) findViewById(R.id.pager);
         adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), 3);
         vpPager.setAdapter(adapterViewPager);
-/*
+*/
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Topics"));
         tabLayout.addTab(tabLayout.newTab().setText("Feed"));
@@ -38,8 +39,8 @@ public class TopicsActivity extends AppCompatActivity {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        final PagerAdapter adapter = new com.ua.cm.project.unews.PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), 3);
+        viewPager.setAdapter(adapterViewPager);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -56,7 +57,7 @@ public class TopicsActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });*/
+        });
     }
 
     @Override
