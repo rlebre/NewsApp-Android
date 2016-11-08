@@ -28,9 +28,7 @@ import java.util.List;
  */
 
 public class FeedFragment extends Fragment {
-    private ArrayAdapter<String> weatherForecastListAdapter;
-    String rssResult = "";
-    boolean item = false;
+    private ArrayAdapter<String> newsListAdapter;
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
@@ -40,16 +38,15 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed, container, false);
-        // prepare the list adapter
-        weatherForecastListAdapter = new ArrayAdapter<String>(
+
+        newsListAdapter = new ArrayAdapter<String>(
                 getActivity(), // The current context (this activity)
                 R.layout.feed_list_item_layout, // The name of the layout ID.
                 R.id.textNewsList, // The ID of the textview to populate.
                 new ArrayList<String>()); // a collection of string entries
-        // Get a reference to the ListView, and attach this adapter to it.
 
         ListView listView = (ListView) view.findViewById(R.id.feed_listView);
-        listView.setAdapter(weatherForecastListAdapter);
+        listView.setAdapter(newsListAdapter);
 
         new readFeed().execute("http://feeds.feedburner.com/PublicoRSS");
 
@@ -72,6 +69,11 @@ public class FeedFragment extends Fragment {
            /* for (News n : result) {
                 Log.d("HEADLINE: ", n.getTitle());
             }*/
+            if (result != null) {
+                for (News n : result) {
+                    newsListAdapter.add(n.getTitle());
+                }
+            }
         }
 
         private List<News> getFeed(String link) {
