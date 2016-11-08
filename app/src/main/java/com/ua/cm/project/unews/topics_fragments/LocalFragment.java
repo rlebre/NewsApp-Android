@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -75,7 +76,14 @@ public class LocalFragment extends Fragment {
         try {
             locationTextView.setVisibility(View.INVISIBLE);
             //locationTextView.setText(l.getLatitude() + ":" + l.getLongitude() + ", " + getCurrentCity(l.getLatitude(), l.getLongitude()));
-            currentLocation = getCurrentCity(l.getLatitude(), l.getLongitude());
+            if (l != null) {
+                currentLocation = getCurrentCity(l.getLatitude(), l.getLongitude());
+
+                currentLocation = currentLocation.equals("Dalvik") ? "Aveiro" : currentLocation;
+            } else {
+                currentLocation = "Aveiro";
+            }
+
             if (currentLocation.equals("") || currentLocation.equals("Dalvik")) {
                 locationTextView.setVisibility(View.VISIBLE);
                 locationTextView.setText("No news in current location");
@@ -138,6 +146,23 @@ public class LocalFragment extends Fragment {
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return null;
             }
+
+            locationManager.requestLocationUpdates(provider, 100000, 0,
+                    new LocationListener() {
+
+                        public void onLocationChanged(Location location) {
+                        }
+
+                        public void onProviderDisabled(String provider) {
+                        }
+
+                        public void onProviderEnabled(String provider) {
+                        }
+
+                        public void onStatusChanged(String provider, int status, Bundle extras) {
+                        }
+                    });
+
             Location l = locationManager.getLastKnownLocation(provider);
             if (l == null) {
                 continue;
@@ -146,6 +171,7 @@ public class LocalFragment extends Fragment {
                 bestLocation = l;
             }
         }
+
         return bestLocation;
     }
 

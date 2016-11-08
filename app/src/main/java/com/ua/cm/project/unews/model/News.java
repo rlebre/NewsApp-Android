@@ -1,5 +1,7 @@
 package com.ua.cm.project.unews.model;
 
+import android.text.Html;
+
 import java.io.Serializable;
 
 /**
@@ -16,6 +18,10 @@ public class News implements Serializable {
     private String link;
     private String shortDescription;
     private String imageLink;
+
+    public News() {
+        title = description = author = service = pub_date = category = link = shortDescription = imageLink = "";
+    }
 
     public News(String title, String shortDescription, String description, String category, String link) {
         this.title = title;
@@ -34,6 +40,10 @@ public class News implements Serializable {
         this.category = category;
         this.link = link;
         this.shortDescription = shortDescription;
+    }
+
+    public News(News n) {
+        this(n.getTitle(), n.getShortDescription(), n.getDescription(), n.getAuthor(), n.getService(), n.getPub_date(), n.getCategory(), n.getLink());
     }
 
     public String getTitle() {
@@ -121,5 +131,21 @@ public class News implements Serializable {
                 ", shortDescription='" + shortDescription + '\'' +
                 ", imageLink='" + imageLink + '\'' +
                 '}';
+    }
+
+    public void clear() {
+        title = description = author = pub_date = category = link = shortDescription = imageLink = "";
+    }
+
+    public void removeTags() {
+        this.title = Html.fromHtml(this.title).toString();
+        this.description = Html.fromHtml(this.description).toString();
+        this.author = Html.fromHtml(this.author).toString();
+        this.service = Html.fromHtml(this.service).toString();
+        this.pub_date = Html.fromHtml(this.pub_date).toString();
+        this.category = Html.fromHtml(this.category).toString();
+        this.link = Html.fromHtml(this.link).toString();
+        this.shortDescription = Html.fromHtml(this.shortDescription).toString();
+        this.imageLink = Html.fromHtml(this.imageLink).toString();
     }
 }
