@@ -91,6 +91,14 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    public void onBackPressed() {
+        firebase.logout();
+        LoginManager.getInstance().logOut(); //facebook logout if logged in
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        super.onBackPressed();
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.cancel_button:
