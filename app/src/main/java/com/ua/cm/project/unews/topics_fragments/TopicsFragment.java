@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +18,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ua.cm.project.unews.R;
 import com.ua.cm.project.unews.ShowNewsActivity;
+import com.ua.cm.project.unews.firebase.Firebase;
 import com.ua.cm.project.unews.model.News;
 import com.ua.cm.project.unews.model.NewsAdapter;
 
@@ -40,6 +40,8 @@ public class TopicsFragment extends Fragment {
     private boolean isFavCategoriesFetched;
     private List<String> favouriteCategories;
 
+    private Firebase firebase;
+
     public static TopicsFragment newInstance() {
         return new TopicsFragment();
     }
@@ -48,6 +50,7 @@ public class TopicsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        firebase = new Firebase();
         data = new ArrayList<>();
         myOnClickListener = new MyOnClickListener();
         isFavCategoriesFetched = false;
@@ -58,7 +61,7 @@ public class TopicsFragment extends Fragment {
     private void getFavouriteCategories() {
 
         DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        Query query = mFirebaseDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
+        Query query = mFirebaseDatabaseReference.child("users").child(firebase.getUserID()).child("categories").orderByKey();
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

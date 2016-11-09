@@ -16,7 +16,8 @@
             android:id="@+id/imageViewShowNewsDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_launcher" />
+            app:srcCompat="@drawable/ic_launcher"
+            android:contentDescription="@string/service_icon" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,15 +29,13 @@
                 android:id="@+id/titleShowNewsDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Title" />
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/authorShowNewsDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Author" />
+                android:layout_weight="1" />
         </LinearLayout>
 
     </LinearLayout>
@@ -49,8 +48,7 @@
         <TextView
             android:id="@+id/descriptionShowNewsDetails"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description" />
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 
 </LinearLayout>

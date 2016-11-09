@@ -22,6 +22,7 @@
                 android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/headline_icon"
                 android:src="@drawable/ic_launcher"
                 android:tag="image_tag" />
 
@@ -36,7 +37,6 @@
                     android:id="@+id/textViewTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Title"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView
@@ -44,8 +44,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-
-                    android:text="Android Version"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </LinearLayout>

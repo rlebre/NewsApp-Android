@@ -11,7 +11,6 @@ import android.widget.ToggleButton;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -70,7 +69,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
             t.setOnClickListener(this);
         }
 
-        Query query = firebase.getDatabaseReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
+        Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("categories").orderByKey();
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

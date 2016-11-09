@@ -13,25 +13,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.facebook.login.LoginManager;
-import com.google.firebase.auth.FirebaseAuth;
+import com.ua.cm.project.unews.firebase.Firebase;
 import com.ua.cm.project.unews.topics_fragments.FeedFragment;
 import com.ua.cm.project.unews.topics_fragments.LocalFragment;
 import com.ua.cm.project.unews.topics_fragments.TopicsFragment;
 
 public class TopicsActivity extends AppCompatActivity {
-    FragmentPagerAdapter adapterViewPager;
+    private Firebase firebase;
+    private FragmentPagerAdapter adapterViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
+
+        firebase = new Firebase();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Topics"));
-        tabLayout.addTab(tabLayout.newTab().setText("Feed"));
-        tabLayout.addTab(tabLayout.newTab().setText("Local"));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.topics));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.feed));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.local));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
@@ -69,7 +73,7 @@ public class TopicsActivity extends AppCompatActivity {
             case R.id.action_settings:
                 startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
             case R.id.action_logout:
-                FirebaseAuth.getInstance().signOut();
+                firebase.logout();
                 LoginManager.getInstance().logOut();
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
@@ -106,7 +110,7 @@ public class TopicsActivity extends AppCompatActivity {
             return mNumOfTabs;
         }
 
-        @Override
+        /*@Override
         public CharSequence getPageTitle(int position) {
             String title = "";
 
@@ -123,7 +127,7 @@ public class TopicsActivity extends AppCompatActivity {
             }
 
             return title;
-        }
+        }*/
     }
 }
 

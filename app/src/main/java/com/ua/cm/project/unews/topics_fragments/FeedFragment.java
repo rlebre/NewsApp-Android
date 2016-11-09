@@ -13,6 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.ua.cm.project.unews.R;
 import com.ua.cm.project.unews.feed.FeedReader;
 import com.ua.cm.project.unews.firebase.Firebase;
@@ -31,6 +35,7 @@ import java.util.List;
 public class FeedFragment extends Fragment {
     private ArrayAdapter<String> newsListAdapter;
     private ImageView img;
+    private Firebase firebase;
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
@@ -41,6 +46,7 @@ public class FeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed, container, false);
         img = (ImageView) view.findViewById(R.id.newsIcon);
+        firebase = new Firebase();
 
         newsListAdapter = new ArrayAdapter<String>(
                 getActivity(), // The current context (this activity)
@@ -52,8 +58,29 @@ public class FeedFragment extends Fragment {
         listView.setAdapter(newsListAdapter);
 
 
-        List<String> subFeeds = new Firebase().getSubscribedFeeds();
-        new readFeed().execute(subFeeds);
+        //String[] urls = {"http://www.jornaldenegocios.pt/rss", "http://feeds.feedburner.com/PublicoRSS", "http://www.rtp.pt/noticias/rss", "http://feeds.feedburner.com/expresso-geral"};
+
+        Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("subscribed_feeds").orderByKey();
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<String> feed_list = new ArrayList<String>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot s : dataSnapshot.getChildren()) {
+                        feed_list.add((String) s.getValue());
+                    }
+                    new readFeed().execute(feed_list);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+
+        });
+
         //new Image_Async().execute();
         return view;
     }

@@ -9,9 +9,6 @@ import com.google.firebase.auth.FirebaseAuth.AuthStateListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Created by rui on 10/25/16.
  */
@@ -80,8 +77,12 @@ public class Firebase {
         return mAuth.signInAnonymously();
     }
 
-    public List<String> getSubscribedFeeds() {
-        String[] urls = {"http://www.jornaldenegocios.pt/rss", "http://feeds.feedburner.com/PublicoRSS", "http://www.rtp.pt/noticias/rss", "http://feeds.feedburner.com/expresso-geral"};
-        return Arrays.asList(urls);
+
+    public Task<AuthResult> createUserWithEmailAndPassword(String email, String password) {
+        return mAuth.createUserWithEmailAndPassword(email, password);
+    }
+
+    public void sendEmailVerification() {
+        mAuth.getCurrentUser().sendEmailVerification();
     }
 }

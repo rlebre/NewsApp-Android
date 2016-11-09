@@ -51,4 +51,15 @@
     <string name="tech">Tech</string>
     <string name="world">World</string>
     <string name="choose_fav_cat">\nPlease choose favorite categories.</string>
+    <string name="author">Author</string>
+    <string name="description">Description</string>
+    <string name="title">Title</string>
+    <string name="service_icon">Service Icon</string>
+    <string name="headline_icon">Headline Icon</string>
+    <string name="registering_user">Registering User...</string>
+    <string name="registered_successfully">Registered successfully</string>
+    <string name="could_not_regist">Could not register</string>
+    <string name="topics">Topics</string>
+    <string name="feed">Feed</string>
+    <string name="local">Local</string>
 </resources>
