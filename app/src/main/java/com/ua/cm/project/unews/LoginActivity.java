@@ -28,23 +28,19 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.ua.cm.project.unews.firebase.Firebase;
 
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
-    protected FirebaseAuth mAuth;
     protected FirebaseAuth.AuthStateListener mAuthListener;
-    private DatabaseReference mDatabaseReference;
     static final String TAG = "LOGIN_ACTIVITY";
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -55,11 +51,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int RC_SIGN_IN = 9001;
     private boolean isFavChosen;
 
+    private Firebase firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        this.firebase = new Firebase();
 
         this.findViewById(R.id.login_google_button).setOnClickListener(this);
         this.findViewById(R.id.login_register_button).setOnClickListener(this);
@@ -81,9 +80,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onCancel() {
-
                 Log.d(TAG, "facebook:onCancel");
-
                 Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
             }
 
@@ -94,9 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        mAuth = FirebaseAuth.getInstance();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -112,8 +107,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                if (firebase.isUserLoggedIn()) {
                     startNextActivity();
                 } else {
                     //startActivity(new Intent(LoginActivity.this, LoginActivity.class));
@@ -125,14 +119,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        firebase.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+            firebase.removeAuthStateListener(mAuthListener);
         }
     }
 
@@ -164,7 +158,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
+        firebase.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -174,9 +168,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
                         } else {
-                            saveInfo(mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getEmail());
-                            startNextActivity();
-                            finish();
+                            Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
+                            Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("profile").child("reg_timestamp");
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot reg_timestamp) {
+                                    if (!reg_timestamp.exists()) {
+                                        saveInfo(firebase.getUserID(), firebase.getUsername(), firebase.getUserEmail(), "google", true);
+                                    } else {
+                                        saveInfo(firebase.getUserID(), firebase.getUsername(), firebase.getUserEmail(), "google", false);
+                                    }
+
+                                    startNextActivity();
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.d("ERROR", databaseError.getMessage());
+                                }
+                            });
                         }
                     }
                 });
@@ -184,11 +195,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     public void startNextActivity() {
-        if (mAuth.getCurrentUser() == null) {
+        // caso seja pedida a proxima activity sem o utilizador estar registado, entao e porque este nao se deseja logar
+        if (!firebase.isUserLoggedIn()) {
             startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
         } else {
-            DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-            Query query = mFirebaseDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
+            Query query = firebase.getDatabaseReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -201,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             });
 
-            if (isFavChosen) {
+            if (!isFavChosen) {
                 startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
             } else {
                 startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
@@ -240,7 +251,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "signInWithCredential:ENTREIII");
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
+        firebase.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -252,16 +263,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             LoginManager.getInstance().logOut();
                         } else {
                             Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
-                            startNextActivity();
-                            saveInfo(mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), mAuth.getCurrentUser().getEmail());
-                            finish();
+
+                            Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("profile").child("reg_timestamp");
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot reg_timestamp) {
+                                    if (!reg_timestamp.exists()) {
+                                        saveInfo(firebase.getUserID(), firebase.getUsername(), firebase.getUserEmail(), "facebook", true);
+                                    } else {
+                                        saveInfo(firebase.getUserID(), firebase.getUsername(), firebase.getUserEmail(), "facebook", false);
+                                    }
+
+                                    startNextActivity();
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.d("ERROR", databaseError.getMessage());
+                                }
+                            });
                         }
                     }
                 });
     }
 
     private void signInAnonymous() {
-        mAuth.signInAnonymously()
+        firebase.signInAnonymously()
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -275,9 +303,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    private void saveInfo(String uid, String name, String email) {
-        mDatabaseReference.child("users").child(uid).child("profile").child("name").setValue(name);
-        mDatabaseReference.child("users").child(uid).child("profile").child("email").setValue(email);
-        mDatabaseReference.child("users").child(uid).child("profile").child("reg_timestamp").setValue(ServerValue.TIMESTAMP);
+    private void saveInfo(String uid, String name, String email, String accType, boolean firstLogin) {
+        if (firstLogin) {
+            firebase.getDatabaseReference().child("users").child(uid).child("profile").child("reg_timestamp").setValue(ServerValue.TIMESTAMP);
+        }
+
+        /*
+        Date date = new Date(new Long("1478694919674"));
+        SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        sfd.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Log.d("DATE", sfd.format(date));
+        */
+
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("name").setValue(name);
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("email").setValue(email);
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("last_login").setValue(ServerValue.TIMESTAMP);
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("account_type").setValue(accType);
     }
 }

@@ -1,10 +1,18 @@
 package com.ua.cm.project.unews.firebase;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,11 +55,32 @@ public class Firebase {
         return "";
     }
 
+    public DatabaseReference getDatabaseReference() {
+        return mDatabaseReference;
+    }
+
     public void logout() {
         mAuth.signOut();
     }
 
+    public void addAuthStateListener(AuthStateListener authListener) {
+        mAuth.addAuthStateListener(authListener);
+    }
+
+    public void removeAuthStateListener(AuthStateListener authListener) {
+        mAuth.removeAuthStateListener(authListener);
+    }
+
+    public Task<AuthResult> signInWithCredential(AuthCredential credential) {
+        return mAuth.signInWithCredential(credential);
+    }
+
+    public Task<AuthResult> signInAnonymously() {
+        return mAuth.signInAnonymously();
+    }
+
     public List<String> getSubscribedFeeds() {
-        return null;
+        String[] urls = {"http://www.jornaldenegocios.pt/rss", "http://feeds.feedburner.com/PublicoRSS", "http://www.rtp.pt/noticias/rss", "http://feeds.feedburner.com/expresso-geral"};
+        return Arrays.asList(urls);
     }
 }
