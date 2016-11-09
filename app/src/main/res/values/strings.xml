@@ -48,4 +48,7 @@
     <string name="error">Error: </string>
     <string name="cancelled">Cancelled</string>
     <string name="not_now">Not now</string>
+    <string name="tech">Tech</string>
+    <string name="world">World</string>
+    <string name="choose_fav_cat">\nPlease choose favorite categories.</string>
 </resources>

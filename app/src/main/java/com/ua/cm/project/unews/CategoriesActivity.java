@@ -12,13 +12,11 @@ import android.widget.ToggleButton;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.ua.cm.project.unews.firebase.Firebase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,10 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CategoriesActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private DatabaseReference mDatabaseReference;
-    private FirebaseAuth mAuth;
-
+    private Firebase firebase;
     private ArrayList<ToggleButton> toggleButtons;
 
     @Override
@@ -38,23 +33,22 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_categories);
+        firebase = new Firebase();
 
-        mAuth = FirebaseAuth.getInstance();
-        final TextView textView = (TextView) findViewById(R.id.textView);
+        final TextView textView = (TextView) findViewById(R.id.categoriesTextView);
 
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            String username = user.getDisplayName() != null ? user.getDisplayName() : user.getEmail();
+        if (firebase.isUserLoggedIn()) {
+            String username = firebase.getUsername() != null ? firebase.getUsername() : firebase.getUserEmail();
 
-            textView.setText("Hi, " + username);
-            textView.append("\nPlease choose favorite categories.");
-            Log.d("USSER", user.getEmail() + ".");
+            textView.setText(getString(R.string.hi) + ", " + username);
+            textView.append(getString(R.string.choose_fav_cat));
+            Log.d("USER", firebase.getUserEmail() + ".");
         } else {
-            textView.setText("Hi, please choose favorite categories.");
+            textView.setText(getString(R.string.hi) + "," + getString(R.string.choose_fav_cat));
         }
 
-        Button logout = (Button) findViewById(R.id.logout_button);
-        logout.setOnClickListener(this);
+        Button cancelButton = (Button) findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(this);
 
         toggleButtons = new ArrayList<>();
 
@@ -76,9 +70,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
             t.setOnClickListener(this);
         }
 
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        Query query = mDatabaseReference.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
+        Query query = firebase.getDatabaseReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -96,17 +88,14 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
                 Log.d("ERROR", databaseError.getMessage());
             }
         });
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-
-        }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.logout_button:
-                mAuth.signOut();
-                LoginManager.getInstance().logOut();
+            case R.id.cancel_button:
+                firebase.logout();
+                LoginManager.getInstance().logOut(); //facebook logout if logged in
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 finish();
                 break;
@@ -119,8 +108,6 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void checkValuesToggled() {
-        String uid = mAuth.getCurrentUser().getUid();
-
         List<String> map = new LinkedList<>();
 
         for (ToggleButton t : toggleButtons) {
@@ -129,8 +116,7 @@ public class CategoriesActivity extends AppCompatActivity implements View.OnClic
             }
         }
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("users/" + uid + "/categories/", map);
-        mDatabaseReference.updateChildren(childUpdates);
-
+        childUpdates.put("users/" + firebase.getUserID() + "/categories/", map);
+        firebase.getDatabaseReference().updateChildren(childUpdates);
     }
 }

@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private CallbackManager mCallbackManager;
     private LoginButton loginButton;
     private static final int RC_SIGN_IN = 9001;
-    private boolean isFavChosen;
 
     private Firebase firebase;
 
@@ -107,11 +106,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebase.isUserLoggedIn()) {
+                /*if (firebase.isUserLoggedIn()) {
                     startNextActivity();
                 } else {
                     //startActivity(new Intent(LoginActivity.this, LoginActivity.class));
-                }
+                }*/
             }
         };
     }
@@ -180,7 +179,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     }
 
                                     startNextActivity();
-                                    finish();
                                 }
 
                                 @Override
@@ -198,12 +196,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // caso seja pedida a proxima activity sem o utilizador estar registado, entao e porque este nao se deseja logar
         if (!firebase.isUserLoggedIn()) {
             startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
+            finish();
         } else {
             Query query = firebase.getDatabaseReference().child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("categories").orderByKey();
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    isFavChosen = dataSnapshot.exists();
+                    if (!dataSnapshot.exists()) {
+                        startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
+                    } else {
+                        startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
+                    }
+                    finish();
                 }
 
                 @Override
@@ -211,14 +215,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Log.d("ERROR", databaseError.getMessage());
                 }
             });
-
-            if (!isFavChosen) {
-                startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
-            } else {
-                startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
-            }
         }
-        finish();
     }
 
     @Override
