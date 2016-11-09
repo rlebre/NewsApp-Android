@@ -19,15 +19,15 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+import com.ua.cm.project.unews.firebase.Firebase;
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginEmailActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
-    // UI references.
+    private Firebase firebase;
+
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private ProgressDialog progressDialog;
@@ -36,8 +36,9 @@ public class LoginEmailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_email);
-        // Set up the login form.
-        mAuth = FirebaseAuth.getInstance();
+
+        firebase = new Firebase();
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -105,7 +106,7 @@ public class LoginEmailActivity extends AppCompatActivity {
             progressDialog.setMessage("Signing in...");
             progressDialog.show();
             //authenticate user
-            mAuth.signInWithEmailAndPassword(email, password)
+            firebase.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(LoginEmailActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -115,7 +116,7 @@ public class LoginEmailActivity extends AppCompatActivity {
                                 Toast.makeText(LoginEmailActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                             } else {
                                 startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
-                                Toast.makeText(getApplicationContext(), "LOGGED IN", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), getString(R.string.logged_in), Toast.LENGTH_LONG).show();
                                 finish();
                             }
                         }
