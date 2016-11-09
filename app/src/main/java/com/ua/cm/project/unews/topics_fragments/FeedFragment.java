@@ -1,5 +1,7 @@
 package com.ua.cm.project.unews.topics_fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,14 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.ua.cm.project.unews.R;
+import com.ua.cm.project.unews.feed.FeedReader;
+import com.ua.cm.project.unews.firebase.Firebase;
 import com.ua.cm.project.unews.model.News;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -29,6 +30,7 @@ import java.util.List;
 
 public class FeedFragment extends Fragment {
     private ArrayAdapter<String> newsListAdapter;
+    private ImageView img;
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
@@ -38,6 +40,7 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed, container, false);
+        img = (ImageView) view.findViewById(R.id.newsIcon);
 
         newsListAdapter = new ArrayAdapter<String>(
                 getActivity(), // The current context (this activity)
@@ -48,18 +51,20 @@ public class FeedFragment extends Fragment {
         ListView listView = (ListView) view.findViewById(R.id.feed_listView);
         listView.setAdapter(newsListAdapter);
 
-        new readFeed().execute("http://feeds.feedburner.com/PublicoRSS");
 
+        List<String> subFeeds = new Firebase().getSubscribedFeeds();
+        new readFeed().execute(subFeeds);
+        //new Image_Async().execute();
         return view;
     }
 
 
-    public class readFeed extends AsyncTask<String, Void, List<News>> {
+    public class readFeed extends AsyncTask<List<String>, Void, List<News>> {
         @Override
-        protected List<News> doInBackground(String... params) {
+        protected List<News> doInBackground(List<String>... params) {
             List<News> n = new ArrayList<>();
-            for (String url : params) {
-                n.addAll(getFeed(url));
+            for (String url : params[0]) {
+                n.addAll(FeedReader.getFeed(url));
             }
             return n;
         }
@@ -75,87 +80,33 @@ public class FeedFragment extends Fragment {
                 }
             }
         }
+    }
 
-        private List<News> getFeed(String link) {
-            List<News> newsList = new ArrayList<>();
+
+    class Image_Async extends AsyncTask<Bitmap, Bitmap, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(Bitmap... arg0) {
+            Bitmap bmp = null;
             try {
-                URL url = new URL(link);
-                News n = new News();
-
-                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-                factory.setNamespaceAware(false);
-                XmlPullParser xpp = factory.newPullParser();
-
-                xpp.setInput(url.openStream(), "UTF_8");
-
-                boolean insideItem = false;
-
-                int eventType = xpp.getEventType();
-
-                while (eventType != XmlPullParser.END_DOCUMENT) {
-                    if (eventType == XmlPullParser.START_TAG) {
-                        switch (xpp.getName().toLowerCase()) {
-                            case "title":
-                                if (insideItem == false) {
-                                    n.setService(xpp.nextText());
-                                } else {
-                                    n.setTitle(xpp.nextText());
-                                }
-                                break;
-                            case "item":
-                                insideItem = true;
-                                break;
-                            case "link":
-                                if (insideItem) {
-                                    n.setLink(xpp.nextText());
-                                }
-                                break;
-                            case "category":
-                                if (insideItem) {
-                                    n.setCategory(xpp.nextText());
-                                }
-                                break;
-                            case "creator":
-                            case "dc:creator":
-                            case "author":
-                                if (insideItem) {
-                                    n.setAuthor(xpp.nextText());
-                                }
-                                break;
-                            case "description":
-                                if (insideItem) {
-                                    String description = xpp.nextText();
-                                    n.setDescription(description);
-                                    n.setShortDescription(description.length() < 85 ? description : description.substring(0, 85) + "...");
-                                }
-                                break;
-                            case "pubdate":
-                                if (insideItem) {
-                                    n.setPub_date(xpp.nextText());
-                                }
-                                break;
-                        }
-                    } else if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase("item")) {
-                        insideItem = false;
-                        n.removeTags();
-                        newsList.add(new News(n));
-                        n.clear();
-                    }
-
-                    eventType = xpp.next(); //move to next element
+                URL url = new URL("http://static.publico.pt/files/header/img/publico.png");
+                try {
+                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-
-
-            return newsList;
+            return bmp;
         }
-    }
 
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            // img.setImageBitmap(result);
+            // super.onPostExecute(result);
+        }
+
+    }
 }

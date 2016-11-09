@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.List;
+
 /**
  * Created by rui on 10/25/16.
  */
@@ -47,5 +49,9 @@ public class Firebase {
 
     public void logout() {
         mAuth.signOut();
+    }
+
+    public List<String> getSubscribedFeeds() {
+        return null;
     }
 }
