@@ -110,25 +110,6 @@ public class TopicsActivity extends AppCompatActivity {
         public int getCount() {
             return mNumOfTabs;
         }
-
-        /*@Override
-        public CharSequence getPageTitle(int position) {
-            String title = "";
-
-            switch (position) {
-                case 0:
-                    title = "Topics";
-                    break;
-                case 1:
-                    title = "Feed";
-                    break;
-                case 2:
-                    title = "Local";
-                    break;
-            }
-
-            return title;
-        }*/
     }
 }
 
