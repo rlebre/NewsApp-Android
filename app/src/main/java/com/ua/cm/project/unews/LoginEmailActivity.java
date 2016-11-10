@@ -1,31 +1,16 @@
 package com.ua.cm.project.unews;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,20 +20,19 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.Manifest.permission.READ_CONTACTS;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.ua.cm.project.unews.firebase.Firebase;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginEmailActivity extends AppCompatActivity{
+public class LoginEmailActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
-    // UI references.
+    private Firebase firebase;
+
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private ProgressDialog progressDialog;
@@ -57,8 +41,9 @@ public class LoginEmailActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_email);
-        // Set up the login form.
-        mAuth = FirebaseAuth.getInstance();
+
+        firebase = new Firebase();
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -126,18 +111,34 @@ public class LoginEmailActivity extends AppCompatActivity{
             progressDialog.setMessage("Signing in...");
             progressDialog.show();
             //authenticate user
-            mAuth.signInWithEmailAndPassword(email, password)
+            firebase.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(LoginEmailActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             progressDialog.dismiss();
-
                             if (!task.isSuccessful()) {
                                 Toast.makeText(LoginEmailActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                             } else {
-                                startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
-                                Toast.makeText(getApplicationContext(), "LOGGED IN", Toast.LENGTH_LONG).show();
-                                finish();
+                                Toast.makeText(getApplicationContext(), getString(R.string.logged_in), Toast.LENGTH_LONG).show();
+                                Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("categories").orderByKey();
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Intent intent = null;
+                                        if (!dataSnapshot.exists()) {
+                                            intent = new Intent(getApplicationContext(), CategoriesActivity.class);
+                                        } else {
+                                            intent = new Intent(getApplicationContext(), TopicsActivity.class);
+                                        }
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.d("ERROR", databaseError.getMessage());
+                                    }
+                                });
                             }
                         }
                     });

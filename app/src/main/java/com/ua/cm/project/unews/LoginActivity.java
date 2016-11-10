@@ -1,19 +1,17 @@
 package com.ua.cm.project.unews;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -30,14 +28,18 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
+import com.ua.cm.project.unews.firebase.Firebase;
 
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
-    protected FirebaseAuth mAuth;
     protected FirebaseAuth.AuthStateListener mAuthListener;
     static final String TAG = "LOGIN_ACTIVITY";
 
@@ -48,12 +50,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private LoginButton loginButton;
     private static final int RC_SIGN_IN = 9001;
 
+    private Firebase firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
+
+        this.firebase = new Firebase();
 
         this.findViewById(R.id.login_google_button).setOnClickListener(this);
         this.findViewById(R.id.login_register_button).setOnClickListener(this);
@@ -75,20 +79,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onCancel() {
-
                 Log.d(TAG, "facebook:onCancel");
-
-                Toast.makeText(getApplicationContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.cancelled), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
-                Toast.makeText(getApplicationContext(), "Error: " + error.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + error.toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
-        mAuth = FirebaseAuth.getInstance();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -105,12 +106,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    dumpActivityStart();
+                /*if (firebase.isUserLoggedIn()) {
+                    startNextActivity();
                 } else {
                     //startActivity(new Intent(LoginActivity.this, LoginActivity.class));
-                }
+                }*/
             }
         };
     }
@@ -118,14 +118,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        firebase.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
+            firebase.removeAuthStateListener(mAuthListener);
         }
     }
 
@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-
+                Log.d("LOG", result.getStatus().getStatusMessage());
             }
         } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
@@ -149,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(getApplicationContext(), "Connection Failed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.connection_failed), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -157,7 +157,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
+        firebase.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -165,17 +165,57 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getString(R.string.auth_failed_short), Toast.LENGTH_SHORT).show();
                         } else {
-                            dumpActivityStart();
+                            Toast.makeText(LoginActivity.this, getString(R.string.logged_in), Toast.LENGTH_SHORT).show();
+                            Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("profile").child("reg_timestamp");
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot reg_timestamp) {
+                                    if (!reg_timestamp.exists()) {
+                                        saveInfo(firebase.getUserID(), firebase.getUsername(), firebase.getUserEmail(), "google", true);
+                                    } else {
+                                        saveInfo(firebase.getUserID(), firebase.getUsername(), firebase.getUserEmail(), "google", false);
+                                    }
+
+                                    startNextActivity();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.d("ERROR", databaseError.getMessage());
+                                }
+                            });
                         }
                     }
                 });
     }
 
 
-    public void dumpActivityStart() {
-        startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
+    public void startNextActivity() {
+        // caso seja pedida a proxima activity sem o utilizador estar registado, entao e porque este nao se deseja logar
+        if (!firebase.isUserLoggedIn()) {
+            startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
+            finish();
+        } else {
+            Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("categories").orderByKey();
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
+                    } else {
+                        startActivity(new Intent(getApplicationContext(), TopicsActivity.class));
+                    }
+                    finish();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("ERROR", databaseError.getMessage());
+                }
+            });
+        }
     }
 
     @Override
@@ -183,6 +223,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (view.getId()) {
             case R.id.login_email_button:
                 startActivity(new Intent(LoginActivity.this, LoginEmailActivity.class));
+                //Intent intent = new Intent(this, LoginEmailActivity.class);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                //startActivity(intent);
+                //finish();
                 break;
 
             case R.id.login_register_button:
@@ -191,7 +235,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.not_now_hyperlink:
                 //signInAnonymous();
-                dumpActivityStart();
+                startNextActivity();
                 break;
 
             case R.id.login_google_button:
@@ -208,7 +252,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "signInWithCredential:ENTREIII");
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
+        firebase.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -216,18 +260,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed. " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, getString(R.string.auth_failed_short) + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             LoginManager.getInstance().logOut();
                         } else {
-                            Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
-                            dumpActivityStart();
+                            Toast.makeText(LoginActivity.this, getString(R.string.logged_in), Toast.LENGTH_SHORT).show();
+
+                            Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("profile").child("reg_timestamp");
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot reg_timestamp) {
+                                    if (!reg_timestamp.exists()) {
+                                        saveInfo(firebase.getUserID(), firebase.getUsername(), firebase.getUserEmail(), "facebook", true);
+                                    } else {
+                                        saveInfo(firebase.getUserID(), firebase.getUsername(), firebase.getUserEmail(), "facebook", false);
+                                    }
+
+                                    startNextActivity();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.d("ERROR", databaseError.getMessage());
+                                }
+                            });
                         }
                     }
                 });
     }
 
     private void signInAnonymous() {
-        mAuth.signInAnonymously()
+        firebase.signInAnonymously()
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -235,9 +297,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInAnonymously", task.getException());
-                            Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getString(R.string.auth_failed_short), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private void saveInfo(String uid, String name, String email, String accType, boolean firstLogin) {
+        if (firstLogin) {
+            firebase.getDatabaseReference().child("users").child(uid).child("profile").child("reg_timestamp").setValue(ServerValue.TIMESTAMP);
+        }
+
+        /*
+        Date date = new Date(new Long("1478694919674"));
+        SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        sfd.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Log.d("DATE", sfd.format(date));
+        */
+
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("name").setValue(name);
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("email").setValue(email);
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("last_login").setValue(ServerValue.TIMESTAMP);
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("account_type").setValue(accType);
     }
 }

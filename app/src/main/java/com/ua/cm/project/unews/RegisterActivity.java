@@ -1,6 +1,7 @@
 package com.ua.cm.project.unews;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -16,19 +17,15 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.ua.cm.project.unews.firebase.Firebase;
 
 /**
- * A login screen that offers login via email/password.
+ * A login screen that offers register
  */
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+    private Firebase firebase;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabaseReference;
-
-    // UI references.
     private EditText mNameView;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -38,6 +35,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        firebase = new Firebase();
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mNameView = (EditText) findViewById(R.id.register_name);
@@ -55,10 +54,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
         progressDialog = new ProgressDialog(this);
-        mAuth = FirebaseAuth.getInstance();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         findViewById(R.id.register_button).setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.register_button:
+                attemptRegister();
+                break;
+        }
     }
 
     private void attemptRegister() {
@@ -94,47 +101,42 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (cancel) {
             focusView.requestFocus();
         } else {
-            progressDialog.setMessage("Registering User...");
+            progressDialog.setMessage(getString(R.string.registering_user));
             progressDialog.show();
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            firebase.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     progressDialog.dismiss();
 
                     if (task.isSuccessful()) {
-                        Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
-                        mAuth.getCurrentUser().sendEmailVerification();
-                        saveName(mAuth.getCurrentUser().getUid(), mNameView.getText().toString());
-                        finish();
+                        Toast.makeText(RegisterActivity.this, getString(R.string.registered_successfully), Toast.LENGTH_SHORT).show();
+                        firebase.sendEmailVerification();
+                        saveInfo(mNameView.getText().toString(), firebase.getUserEmail());
+                        Intent intent = new Intent(getApplicationContext(), CategoriesActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, R.string.could_not_regist, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         }
     }
 
-
     private boolean isEmailValid(String email) {
         return email.contains("@") && email.contains(".");
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() >= 6;
+        return password.length() > 6;
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.register_button:
-                attemptRegister();
-                break;
-        }
+    private void saveInfo(String name, String email) {
+        String uid = firebase.getUserID();
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("name").setValue(name);
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("email").setValue(email);
+        firebase.getDatabaseReference().child("users").child(uid).child("profile").child("reg_timestamp").setValue(ServerValue.TIMESTAMP);
     }
 
-
-    private void saveName(String uid, String name) {
-        mDatabaseReference.child("users").child(uid).child("name").setValue(name);
-    }
 }
 
