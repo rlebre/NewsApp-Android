@@ -1,5 +1,6 @@
 package com.ua.cm.project.unews.topics_fragments;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -18,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ua.cm.project.unews.R;
+import com.ua.cm.project.unews.ShowNewsActivity;
 import com.ua.cm.project.unews.feed.FeedReader;
 import com.ua.cm.project.unews.firebase.Firebase;
 import com.ua.cm.project.unews.model.News;
@@ -36,6 +39,10 @@ public class FeedFragment extends Fragment {
     private ArrayAdapter<String> newsListAdapter;
     private ImageView img;
     private Firebase firebase;
+    private List<News> newsList;
+    private ListView listView;
+    private static AdapterView.OnItemClickListener myOnClickListener;
+
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
@@ -47,6 +54,8 @@ public class FeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.feed, container, false);
         img = (ImageView) view.findViewById(R.id.newsIcon);
         firebase = new Firebase();
+        newsList = new ArrayList<>();
+        myOnClickListener = new MyOnClickListener();
 
         newsListAdapter = new ArrayAdapter<String>(
                 getActivity(), // The current context (this activity)
@@ -54,8 +63,19 @@ public class FeedFragment extends Fragment {
                 R.id.textNewsList, // The ID of the textview to populate.
                 new ArrayList<String>()); // a collection of string entries
 
-        ListView listView = (ListView) view.findViewById(R.id.feed_listView);
+        listView = (ListView) view.findViewById(R.id.feed_listView);
         listView.setAdapter(newsListAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getContext(), ShowNewsActivity.class);
+                Bundle b = new Bundle();
+                b.putSerializable("param1", newsList.get(position));
+                intent.putExtras(b);
+
+                startActivity(intent);
+            }
+        });
 
 
         //String[] urls = {"http://www.jornaldenegocios.pt/rss", "http://feeds.feedburner.com/PublicoRSS", "http://www.rtp.pt/noticias/rss", "http://feeds.feedburner.com/expresso-geral"};
@@ -64,8 +84,8 @@ public class FeedFragment extends Fragment {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<String> feed_list = new ArrayList<String>();
                 if (dataSnapshot.exists()) {
+                    List<String> feed_list = new ArrayList<>();
                     for (DataSnapshot s : dataSnapshot.getChildren()) {
                         feed_list.add((String) s.getValue());
                     }
@@ -98,12 +118,10 @@ public class FeedFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<News> result) {
-           /* for (News n : result) {
-                Log.d("HEADLINE: ", n.getTitle());
-            }*/
             if (result != null) {
                 for (News n : result) {
                     newsListAdapter.add(n.getTitle());
+                    newsList.add(n);
                 }
             }
         }
@@ -131,9 +149,35 @@ public class FeedFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            // img.setImageBitmap(result);
-            // super.onPostExecute(result);
         }
 
+    }
+
+    private class MyOnClickListener implements AdapterView.OnItemClickListener {
+
+
+        public void onClick(View v) {
+
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            int selectedItemPosition = listView.getSelectedItemPosition();
+
+            /*ShowNewsFragment frag = ShowNewsFragment.newInstance(data.get(selectedItemPosition));
+
+            getFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.topics_layout, frag, "NewFragmentTag")
+                    .addToBackStack(null)
+                    .commit();
+                    */
+            Intent intent = new Intent(getContext(), ShowNewsActivity.class);
+            Bundle b = new Bundle();
+            b.putSerializable("param1", newsList.get(selectedItemPosition));
+            intent.putExtras(b);
+
+            startActivity(intent);
+        }
     }
 }

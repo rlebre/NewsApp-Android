@@ -142,7 +142,6 @@ public class TopicsFragment extends Fragment {
 
     private class MyOnClickListener implements View.OnClickListener {
 
-
         @Override
         public void onClick(View v) {
             int selectedItemPosition = mRecyclerView.getChildAdapterPosition(v);

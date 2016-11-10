@@ -23,6 +23,8 @@ public class ShowNewsActivity extends AppCompatActivity {
         title = (TextView) findViewById(R.id.titleShowNewsDetails);
         author = (TextView) findViewById(R.id.authorShowNewsDetails);
         description = (TextView) findViewById(R.id.descriptionShowNewsDetails);
+        date = (TextView) findViewById(R.id.dateShowNewsDetails);
+
         Bundle b = getIntent().getExtras();
         if (b != null) {
             News news = (News) b.get("param1");
@@ -30,6 +32,7 @@ public class ShowNewsActivity extends AppCompatActivity {
             title.setText(news.getTitle());
             author.setText(news.getAuthor());
             description.setText(news.getDescription());
+            date.setText(news.getPub_date());
         }
     }
 }

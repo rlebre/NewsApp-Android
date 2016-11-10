@@ -30,6 +30,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
                 if (!firebase.isUserLoggedIn()) {
                     startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+                    finish();
                 } else {
                     Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("categories").orderByKey();
                     query.addListenerForSingleValueEvent(new ValueEventListener() {

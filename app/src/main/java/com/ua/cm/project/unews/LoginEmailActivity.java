@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +20,10 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.ua.cm.project.unews.firebase.Firebase;
 
 /**
@@ -111,13 +116,29 @@ public class LoginEmailActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             progressDialog.dismiss();
-
                             if (!task.isSuccessful()) {
                                 Toast.makeText(LoginEmailActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                             } else {
-                                startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
                                 Toast.makeText(getApplicationContext(), getString(R.string.logged_in), Toast.LENGTH_LONG).show();
-                                finish();
+                                Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("categories").orderByKey();
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Intent intent = null;
+                                        if (!dataSnapshot.exists()) {
+                                            intent = new Intent(getApplicationContext(), CategoriesActivity.class);
+                                        } else {
+                                            intent = new Intent(getApplicationContext(), TopicsActivity.class);
+                                        }
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.d("ERROR", databaseError.getMessage());
+                                    }
+                                });
                             }
                         }
                     });

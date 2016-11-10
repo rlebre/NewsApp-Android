@@ -72,6 +72,7 @@ public class TopicsActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_settings:
                 startActivity(new Intent(getApplicationContext(), CategoriesActivity.class));
+                break;
             case R.id.action_logout:
                 firebase.logout();
                 LoginManager.getInstance().logOut();

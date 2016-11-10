@@ -1,6 +1,7 @@
 package com.ua.cm.project.unews;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -111,7 +112,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         Toast.makeText(RegisterActivity.this, getString(R.string.registered_successfully), Toast.LENGTH_SHORT).show();
                         firebase.sendEmailVerification();
                         saveInfo(mNameView.getText().toString(), firebase.getUserEmail());
-                        finish();
+                        Intent intent = new Intent(getApplicationContext(), CategoriesActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     } else {
                         Toast.makeText(RegisterActivity.this, R.string.could_not_regist, Toast.LENGTH_SHORT).show();
                     }
