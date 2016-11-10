@@ -13,13 +13,11 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="title_activity_login_email">Sign in</string>
     <string name="title_activity_register">Register</string>
     <string name="email">Email</string>
     <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
+    <string name="auth_failed_short">Authentication failed.</string>
     <string name="name_hint">Name (optional)</string>
     <string name="logo">logo</string>
     <string name="title_activity_categories">CategoriesActivity</string>
@@ -42,4 +40,24 @@
     <string name="topics_feed">Feed</string>
     <string name="topics_local">Local</string>
 
+    <string name="logged_in">Logged In</string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="error">Error: </string>
+    <string name="cancelled">Cancelled</string>
+    <string name="not_now">Not now</string>
+    <string name="tech">Tech</string>
+    <string name="world">World</string>
+    <string name="choose_fav_cat">\nPlease choose favorite categories.</string>
+    <string name="author">Author</string>
+    <string name="description">Description</string>
+    <string name="title">Title</string>
+    <string name="service_icon">Service Icon</string>
+    <string name="headline_icon">Headline Icon</string>
+    <string name="registering_user">Registering User...</string>
+    <string name="registered_successfully">Registered successfully</string>
+    <string name="could_not_regist">Could not register</string>
+    <string name="topics">Topics</string>
+    <string name="feed">Feed</string>
+    <string name="local">Local</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>
