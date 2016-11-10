@@ -13,9 +13,6 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="title_activity_login_email">Sign in</string>
     <string name="title_activity_register">Register</string>
     <string name="email">Email</string>
@@ -62,4 +59,5 @@
     <string name="topics">Topics</string>
     <string name="feed">Feed</string>
     <string name="local">Local</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>

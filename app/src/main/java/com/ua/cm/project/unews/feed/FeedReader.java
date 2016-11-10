@@ -27,7 +27,7 @@ public class FeedReader {
             factory.setNamespaceAware(false);
             XmlPullParser xpp = factory.newPullParser();
 
-            xpp.setInput(url.openStream(), "UTF_8");
+            xpp.setInput(url.openStream(), "UTF-8");
 
             boolean insideItem = false;
 

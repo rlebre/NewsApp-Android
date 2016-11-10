@@ -79,8 +79,17 @@
         <activity
             android:name=".TopicsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ShowNewsActivity" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity
+            android:name=".ShowNewsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TopicsActivity" />
+        </activity>
     </application>
 
 </manifest>
