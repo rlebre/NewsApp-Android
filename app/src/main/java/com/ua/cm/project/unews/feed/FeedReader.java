@@ -27,12 +27,10 @@ public class FeedReader {
             factory.setNamespaceAware(false);
             XmlPullParser xpp = factory.newPullParser();
 
-            xpp.setInput(url.openStream(), "UTF-8");
-
+            xpp.setInput(url.openStream(), null);
             boolean insideItem = false;
 
             int eventType = xpp.getEventType();
-
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 if (eventType == XmlPullParser.START_TAG) {
                     switch (xpp.getName().toLowerCase()) {
