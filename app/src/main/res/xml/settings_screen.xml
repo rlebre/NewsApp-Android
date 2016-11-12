@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:summary="Change your name"
+        android:title="Name" />
+    <SwitchPreference
+        android:defaultValue="true"
+        android:summary="Enable/Disable notifications"
+        android:title="Notifications" />
+
+    <!--MultiSelectListPreference
+        android:key="multiSelectCategories"
+        android:summary="Change favourite categories"
+        android:title="Favourite categories">
+
+    </MultiSelectListPreference-->
+</PreferenceScreen>
