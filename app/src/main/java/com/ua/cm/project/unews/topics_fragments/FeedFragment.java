@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +36,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rui on 10/25/16.
@@ -48,7 +51,9 @@ public class FeedFragment extends Fragment {
     private List<News> newsList;
     private ListView listView;
     private static AdapterView.OnItemClickListener myOnClickListener;
-    private String m_Text;
+    private String service_title;
+    private String service_link;
+   private FloatingActionButton fab;
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
@@ -62,36 +67,9 @@ public class FeedFragment extends Fragment {
         firebase = new Firebase();
         newsList = new ArrayList<>();
         myOnClickListener = new MyOnClickListener();
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Title");
-
-                final EditText input = new EditText(getContext());
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                builder.setView(input);
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        m_Text = input.getText().toString();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
-            }
-        });
+        setFloatingButton();
 
         newsListAdapter = new ArrayAdapter<String>(
                 getActivity(), // The current context (this activity)
@@ -116,6 +94,13 @@ public class FeedFragment extends Fragment {
 
         //String[] urls = {"http://www.jornaldenegocios.pt/rss", "http://feeds.feedburner.com/PublicoRSS", "http://www.rtp.pt/noticias/rss", "http://feeds.feedburner.com/expresso-geral"};
 
+        getFeedList();
+
+        //new Image_Async().execute();
+        return view;
+    }
+
+    private void getFeedList(){
         Query query = firebase.getDatabaseReference().child("users").child(firebase.getUserID()).child("subscribed_feeds").orderByKey();
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -133,14 +118,56 @@ public class FeedFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-
-
         });
-
-        //new Image_Async().execute();
-        return view;
     }
 
+    private void setFloatingButton(){
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("New Service");
+
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.setOrientation(LinearLayout.VERTICAL);
+                final EditText service = new EditText(getContext());
+                service.setHint("Name of service");
+                service.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+                layout.addView(service);
+                final EditText link = new EditText(getContext());
+                link.setHint("Link to RSS");
+                link.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+                layout.addView(link);
+                builder.setView(layout);
+
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        service_title = service.getText().toString();
+                        service_link = link.getText().toString();
+
+                        String uid = firebase.getUserID();
+                        if(!service_link.startsWith("http://")){
+                            service_link = "http://" + service_link;
+                        }
+                        firebase.getDatabaseReference().child("users").child(uid).child("subscribed_feeds").child(service_title).setValue(service_link);
+
+                        getFeedList();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+    }
 
     public class readFeed extends AsyncTask<List<String>, Void, List<News>> {
         @Override
