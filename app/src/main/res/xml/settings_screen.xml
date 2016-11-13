@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
+        android:key="settingsName"
         android:summary="Change your name"
         android:title="Name" />
     <SwitchPreference
+        android:key="settingsNotifications"
         android:defaultValue="true"
         android:summary="Enable/Disable notifications"
         android:title="Notifications" />
