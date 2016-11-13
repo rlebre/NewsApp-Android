@@ -135,10 +135,15 @@ public class TopicsFragment extends Fragment {
 
     @Override
     public void onResume() {
-        newsAdapter.notifyDataSetChanged();
         super.onResume();
+        newsAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        newsAdapter.notifyDataSetChanged();
+    }
 
     private class MyOnClickListener implements View.OnClickListener {
 
