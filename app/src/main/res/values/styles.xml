@@ -10,7 +10,7 @@
 
     <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:background">@drawable/splash_background</item>
+        <item name="android:colorBackground">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
